@@ -1,0 +1,490 @@
+{% extends "core/base.html" %}
+
+{% block title %}Upload Source - Cognify{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .upload-page {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 24px 60px;
+    }
+
+    .upload-header {
+        margin-bottom: 30px;
+    }
+
+    .upload-header h1 {
+        margin: 0 0 8px;
+        color: #20243a;
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .upload-header p {
+        margin: 0;
+        color: #70798c;
+        font-size: 15px;
+    }
+
+    .upload-card {
+        background: #ffffff;
+        border: 1px solid #e2e6ef;
+        border-radius: 18px;
+        padding: 32px;
+        box-shadow: 0 8px 25px rgba(32, 36, 58, 0.06);
+    }
+
+    .message {
+        padding: 14px 16px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .message.success {
+        background: #eef8f1;
+        color: #287a45;
+        border: 1px solid #ccebd6;
+    }
+
+    .message.error {
+        background: #fff1f1;
+        color: #b33a3a;
+        border: 1px solid #f1cccc;
+    }
+
+    .form-section {
+        margin-bottom: 32px;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    .section-icon {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: #eef1ff;
+        color: #4f6df5;
+
+        border-radius: 10px;
+
+        font-size: 18px;
+    }
+
+    .section-title h2 {
+        margin: 0;
+        color: #20243a;
+        font-size: 19px;
+        font-weight: 650;
+    }
+
+    .section-description {
+        margin: 0 0 16px 48px;
+        color: #70798c;
+        font-size: 14px;
+    }
+
+    /* Notebook */
+
+    .notebook-select {
+        width: 100%;
+        height: 52px;
+
+        padding: 0 16px;
+
+        border: 1px solid #e2e6ef;
+        border-radius: 10px;
+
+        background: #ffffff;
+        color: #20243a;
+
+        font-size: 15px;
+
+        outline: none;
+    }
+
+    .notebook-select:focus {
+        border-color: #4f6df5;
+        box-shadow: 0 0 0 3px rgba(79, 109, 245, 0.12);
+    }
+
+    /* File area */
+
+    .file-upload-box {
+        text-align: center;
+
+        padding: 40px 20px;
+
+        border: 1px solid #e2e6ef;
+        border-radius: 12px;
+
+        background: #fafbfe;
+    }
+
+    .file-icon {
+        width: 55px;
+        height: 55px;
+
+        margin: 0 auto 15px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: #eef1ff;
+        color: #4f6df5;
+
+        border-radius: 14px;
+
+        font-size: 25px;
+    }
+
+    .file-upload-box h3 {
+        margin: 0 0 7px;
+
+        color: #20243a;
+
+        font-size: 17px;
+    }
+
+    .file-upload-box p {
+        margin: 0 0 20px;
+
+        color: #70798c;
+
+        font-size: 13px;
+    }
+
+    /* Browse button */
+
+    .browse-button {
+        display: inline-block;
+
+        padding: 11px 24px;
+
+        background: #4f6df5;
+        color: #ffffff;
+
+        border-radius: 9px;
+
+        font-size: 14px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+    }
+
+    .browse-button:hover {
+        background: #405bd8;
+    }
+
+    /* IMPORTANT:
+       Do NOT use display:none on the file input.
+    */
+
+    .file-input {
+        position: absolute;
+
+        width: 1px;
+        height: 1px;
+
+        opacity: 0;
+
+        overflow: hidden;
+    }
+
+    /* Selected file */
+
+    .selected-file {
+        display: none;
+
+        margin-top: 15px;
+
+        padding: 14px 16px;
+
+        border: 1px solid #d9dfff;
+
+        border-radius: 10px;
+
+        background: #eef1ff;
+    }
+
+    .selected-file-name {
+        color: #20243a;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .selected-file-size {
+        margin-top: 3px;
+
+        color: #70798c;
+        font-size: 12px;
+    }
+
+    /* Upload */
+
+    .upload-button {
+        width: 100%;
+        height: 52px;
+
+        border: none;
+        border-radius: 10px;
+
+        background: #4f6df5;
+        color: #ffffff;
+
+        font-size: 15px;
+        font-weight: 600;
+
+        cursor: pointer;
+    }
+
+    .upload-button:hover {
+        background: #405bd8;
+    }
+
+</style>
+
+
+<div class="upload-page">
+
+    <div class="upload-header">
+
+        <h1>Upload Source</h1>
+
+        <p>
+            Add study materials to one of your Cognify notebooks.
+        </p>
+
+    </div>
+
+
+    <div class="upload-card">
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <!-- VERY IMPORTANT:
+             enctype="multipart/form-data"
+             allows Django to receive the file.
+        -->
+
+        <form
+    method="POST"
+    action="{% url 'upload_source' %}"
+    enctype="multipart/form-data"
+>
+
+    {% csrf_token %}
+
+    <!-- Select Notebook -->
+
+    <div class="form-section">
+
+        <div class="section-title">
+
+            <div class="section-icon">
+                📚
+            </div>
+
+            <h2>Select Notebook</h2>
+
+        </div>
+
+        <p class="section-description">
+            Choose the notebook where you want to save this source.
+        </p>
+
+
+        <select
+            name="notebook"
+            id="notebook"
+            class="notebook-select"
+            required
+        >
+
+            <option value="">
+                Select a notebook
+            </option>
+
+            {% for notebook in notebooks %}
+
+                <option value="{{ notebook.id }}">
+                    {{ notebook.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <!-- Choose File -->
+
+    <div class="form-section">
+
+        <div class="section-title">
+
+            <div class="section-icon">
+                📄
+            </div>
+
+            <h2>Choose File</h2>
+
+        </div>
+
+        <p class="section-description">
+            Add a study material from your device.
+        </p>
+
+
+        <div class="file-upload-box">
+
+            <div class="file-icon">
+                ↑
+            </div>
+
+            <h3>
+                Select a file to upload
+            </h3>
+
+            <p>
+                Supported formats: PDF, DOCX, PPTX and TXT
+            </p>
+
+
+            <label
+                for="sourceFile"
+                class="browse-button"
+            >
+                Browse Files
+            </label>
+
+
+            <!-- IMPORTANT -->
+
+            <input
+                type="file"
+                id="sourceFile"
+                name="file"
+                accept=".pdf,.docx,.pptx,.txt"
+                required
+            >
+
+        </div>
+
+
+        <div
+            id="selectedFile"
+            class="selected-file"
+        >
+
+            <div
+                id="selectedFileName"
+                class="selected-file-name"
+            ></div>
+
+            <div
+                id="selectedFileSize"
+                class="selected-file-size"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Upload -->
+
+    <button
+        type="submit"
+        class="upload-button"
+    >
+        Upload Source
+    </button>
+
+</form>
+
+    </div>
+
+</div>
+
+<script>
+
+const sourceFile =
+    document.getElementById("sourceFile");
+
+const selectedFile =
+    document.getElementById("selectedFile");
+
+const selectedFileName =
+    document.getElementById("selectedFileName");
+
+const selectedFileSize =
+    document.getElementById("selectedFileSize");
+
+
+sourceFile.addEventListener("change", function () {
+
+    if (this.files.length > 0) {
+
+        const file = this.files[0];
+
+        selectedFileName.textContent =
+            file.name;
+
+        selectedFileSize.textContent =
+            formatFileSize(file.size);
+
+        selectedFile.style.display = "block";
+
+    }
+
+});
+
+
+function formatFileSize(bytes) {
+
+    if (bytes < 1024) {
+        return bytes + " Bytes";
+    }
+
+    if (bytes < 1024 * 1024) {
+        return (
+            (bytes / 1024).toFixed(1)
+            + " KB"
+        );
+    }
+
+    return (
+        (bytes / (1024 * 1024)).toFixed(1)
+        + " MB"
+    );
+}
+
+</script>
+{% endblock %}

@@ -1,0 +1,603 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+AI Tutor - Cognify
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .ai-tutor-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 24px 60px;
+    }
+
+
+    .ai-tutor-hero {
+        background:
+            linear-gradient(
+                135deg,
+                #18213f 0%,
+                #283867 55%,
+                #3b4d8f 100%
+            );
+
+        color: white;
+        border-radius: 24px;
+        padding: 42px;
+        margin-bottom: 28px;
+
+        box-shadow:
+            0 18px 45px rgba(20, 30, 70, 0.20);
+    }
+
+
+    .ai-tutor-hero-top {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 12px;
+    }
+
+
+    .ai-tutor-icon {
+        width: 64px;
+        height: 64px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: rgba(255, 255, 255, 0.14);
+        border-radius: 18px;
+
+        font-size: 34px;
+    }
+
+
+    .ai-tutor-hero h1 {
+        margin: 0;
+        font-size: 36px;
+        font-weight: 700;
+    }
+
+
+    .ai-tutor-hero p {
+        margin: 8px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+
+    .ai-tutor-card {
+        background: var(--card-bg, #ffffff);
+        border-radius: 22px;
+
+        padding: 28px;
+
+        box-shadow:
+            0 12px 35px rgba(20, 30, 70, 0.10);
+
+        border: 1px solid
+            var(--border-color, #e7eaf3);
+    }
+
+
+    .ai-tutor-card-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+
+        margin-bottom: 24px;
+    }
+
+
+    .ai-tutor-avatar {
+        width: 48px;
+        height: 48px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 14px;
+
+        background: #eef1ff;
+
+        font-size: 25px;
+    }
+
+
+    .ai-tutor-card-header h2 {
+        margin: 0;
+        font-size: 19px;
+    }
+
+
+    .ai-tutor-card-header p {
+        margin: 4px 0 0;
+        font-size: 14px;
+        opacity: 0.7;
+    }
+
+
+    .ai-tutor-message {
+        padding: 20px;
+
+        border-radius: 18px;
+
+        background: #f6f7fb;
+
+        margin-bottom: 24px;
+
+        line-height: 1.6;
+    }
+
+
+    .ai-tutor-message strong {
+        display: block;
+        margin-bottom: 6px;
+    }
+
+
+    .ai-tutor-message p {
+        margin: 0;
+    }
+
+
+    .ai-tutor-form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+
+    .ai-tutor-form textarea {
+        width: 100%;
+        min-height: 130px;
+
+        resize: vertical;
+
+        box-sizing: border-box;
+
+        padding: 16px 18px;
+
+        border-radius: 16px;
+
+        border: 1px solid #d9deeb;
+
+        background: #ffffff;
+
+        font-family: inherit;
+        font-size: 15px;
+
+        outline: none;
+
+        transition:
+            border-color 0.2s,
+            box-shadow 0.2s;
+    }
+
+
+    .ai-tutor-form textarea:focus {
+        border-color: #5368d8;
+
+        box-shadow:
+            0 0 0 4px rgba(83, 104, 216, 0.12);
+    }
+
+
+    .ai-tutor-send {
+        align-self: flex-end;
+
+        border: none;
+
+        border-radius: 14px;
+
+        padding: 13px 24px;
+
+        background: #5368d8;
+
+        color: white;
+
+        font-size: 15px;
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition:
+            transform 0.2s,
+            box-shadow 0.2s;
+    }
+
+
+    .ai-tutor-send:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 8px 20px rgba(83, 104, 216, 0.28);
+    }
+
+
+    .ai-tutor-features {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 16px;
+
+        margin-top: 22px;
+    }
+
+
+    .ai-tutor-feature {
+        padding: 20px;
+
+        border-radius: 18px;
+
+        background: var(--card-bg, #ffffff);
+
+        border: 1px solid
+            var(--border-color, #e7eaf3);
+    }
+
+
+    .ai-tutor-feature-icon {
+        font-size: 25px;
+        margin-bottom: 10px;
+    }
+
+
+    .ai-tutor-feature h3 {
+        margin: 0 0 6px;
+
+        font-size: 16px;
+    }
+
+
+    .ai-tutor-feature p {
+        margin: 0;
+
+        font-size: 13px;
+
+        line-height: 1.5;
+
+        opacity: 0.7;
+    }
+
+
+    @media (max-width: 700px) {
+
+        .ai-tutor-page {
+            padding: 24px 16px 40px;
+        }
+
+
+        .ai-tutor-hero {
+            padding: 28px 22px;
+        }
+
+
+        .ai-tutor-hero h1 {
+            font-size: 28px;
+        }
+
+
+        .ai-tutor-features {
+            grid-template-columns: 1fr;
+        }
+
+
+        .ai-tutor-send {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+
+<div class="ai-tutor-page">
+
+
+    <!-- HERO -->
+
+    <section class="ai-tutor-hero">
+
+        <div class="ai-tutor-hero-top">
+
+            <div class="ai-tutor-icon">
+                🤖
+            </div>
+
+            <div>
+
+                <h1>
+                    AI Tutor
+                </h1>
+
+                <p>
+                    Your personal AI learning assistant.
+                </p>
+
+            </div>
+
+        </div>
+
+        <p>
+            Ask questions, understand difficult concepts,
+            and learn step by step with Cognify AI.
+        </p>
+
+    </section>
+
+
+    <!-- CHAT -->
+
+    <section class="ai-tutor-card">
+
+        <div class="ai-tutor-card-header">
+
+            <div class="ai-tutor-avatar">
+                🤖
+            </div>
+
+            <div>
+
+                <h2>
+                    Cognify AI Tutor
+                </h2>
+
+                <p>
+                    Ready to help you learn
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="ai-tutor-message"
+            id="aiTutorMessages"
+        >
+
+            <strong>
+                👋 Cognify AI
+            </strong>
+
+            <p>
+                Hi! I'm your AI Tutor. Ask me anything
+                you're studying and I'll help you understand
+                it clearly.
+            </p>
+
+        </div>
+
+
+        <form
+            method="post"
+            id="aiTutorForm"
+            class="ai-tutor-form"
+        >
+
+            {% csrf_token %}
+
+            <textarea
+                id="aiTutorQuestion"
+                name="question"
+                placeholder="Ask something like: Explain photosynthesis in simple terms..."
+                required
+            ></textarea>
+
+
+            <button
+                type="submit"
+                id="aiTutorSendButton"
+                class="ai-tutor-send"
+            >
+                ✨ Ask AI Tutor
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- FEATURES -->
+
+    <section class="ai-tutor-features">
+
+        <div class="ai-tutor-feature">
+
+            <div class="ai-tutor-feature-icon">
+                💡
+            </div>
+
+            <h3>
+                Understand Concepts
+            </h3>
+
+            <p>
+                Get difficult topics explained in
+                simple and easy-to-understand language.
+            </p>
+
+        </div>
+
+
+        <div class="ai-tutor-feature">
+
+            <div class="ai-tutor-feature-icon">
+                📚
+            </div>
+
+            <h3>
+                Study Smarter
+            </h3>
+
+            <p>
+                Use Cognify AI to support your learning
+                and make your study sessions more effective.
+            </p>
+
+        </div>
+
+
+        <div class="ai-tutor-feature">
+
+            <div class="ai-tutor-feature-icon">
+                🎯
+            </div>
+
+            <h3>
+                Learn Step by Step
+            </h3>
+
+            <p>
+                Ask follow-up questions and build your
+                understanding one concept at a time.
+            </p>
+
+        </div>
+
+    </section>
+
+
+</div>
+<script>
+
+    const aiTutorForm = document.getElementById("aiTutorForm");
+    const aiTutorQuestion = document.getElementById("aiTutorQuestion");
+    const aiTutorMessages = document.getElementById("aiTutorMessages");
+    const aiTutorSendButton = document.getElementById("aiTutorSendButton");
+
+
+    aiTutorForm.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+
+        const question = aiTutorQuestion.value.trim();
+
+
+        if (!question) {
+            return;
+        }
+
+
+        aiTutorSendButton.disabled = true;
+        aiTutorSendButton.innerText = "Thinking...";
+
+
+        aiTutorMessages.innerHTML += `
+            <div style="
+                margin-top: 16px;
+                padding: 16px;
+                border-radius: 16px;
+                background: #eef1ff;
+            ">
+                <strong>You</strong>
+                <p style="margin: 6px 0 0;">
+                    ${question}
+                </p>
+            </div>
+        `;
+
+
+        aiTutorQuestion.value = "";
+
+
+        try {
+
+            const response = await fetch(
+                "{% url 'ai_tutor' %}",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": document.querySelector(
+                            "[name=csrfmiddlewaretoken]"
+                        ).value
+                    },
+
+                    body: new URLSearchParams({
+                        question: question
+                    })
+                }
+            );
+
+
+            const data = await response.json();
+
+
+            if (data.answer) {
+
+                aiTutorMessages.innerHTML += `
+                    <div style="
+                        margin-top: 16px;
+                        padding: 20px;
+                        border-radius: 18px;
+                        background: #f6f7fb;
+                        line-height: 1.6;
+                    ">
+                        <strong>🤖 Cognify AI</strong>
+
+                        <p style="margin: 8px 0 0;">
+                            ${data.answer}
+                        </p>
+                    </div>
+                `;
+
+            } else {
+
+                aiTutorMessages.innerHTML += `
+                    <div style="
+                        margin-top: 16px;
+                        padding: 16px;
+                        border-radius: 16px;
+                        background: #fff1f1;
+                    ">
+                        <strong>⚠️ Error</strong>
+
+                        <p style="margin: 6px 0 0;">
+                            ${data.error || "Something went wrong."}
+                        </p>
+                    </div>
+                `;
+
+            }
+
+
+        } catch (error) {
+
+            aiTutorMessages.innerHTML += `
+                <div style="
+                    margin-top: 16px;
+                    padding: 16px;
+                    border-radius: 16px;
+                    background: #fff1f1;
+                ">
+                    <strong>⚠️ Connection Error</strong>
+
+                    <p style="margin: 6px 0 0;">
+                        Unable to connect to Cognify AI.
+                    </p>
+                </div>
+            `;
+
+        }
+
+
+        aiTutorSendButton.disabled = false;
+        aiTutorSendButton.innerText = "✨ Ask AI Tutor";
+
+    });
+
+</script>
+{% endblock %}

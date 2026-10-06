@@ -1,0 +1,97 @@
+{% extends "core/base.html" %}
+
+{% block title %}Ask a Question - {{ notebook.name }}{% endblock %}
+
+{% block content %}
+
+<div class="workspace-container">
+
+    <a href="{% url 'workspace' notebook.id %}" class="back-link">
+        ← Back to Notebook
+    </a>
+
+    <div class="workspace-header">
+        <h1>Ask a Question</h1>
+
+        <p>
+            Ask a question about your uploaded sources.
+        </p>
+    </div>
+
+    <div class="workspace-card">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <label for="question">
+                Your question
+            </label>
+
+            <textarea
+                id="question"
+                name="question"
+                rows="5"
+                placeholder="Example: What is machine learning?"
+                required
+            >{{ question|default:"" }}</textarea>
+
+            <button type="submit" class="ask-button">
+                Ask Question
+            </button>
+
+        </form>
+
+    </div>
+
+
+    {% if answer %}
+
+    <div class="workspace-card">
+
+        <h2>Answer</h2>
+
+        <div class="answer-content">
+            {{ answer|linebreaks }}
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<style>
+
+    label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        resize: vertical;
+        font-family: inherit;
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+
+    .ask-button {
+        background: #222;
+        color: white;
+    }
+
+    .answer-content {
+        line-height: 1.8;
+        font-size: 16px;
+    }
+
+</style>
+
+{% endblock %}

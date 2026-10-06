@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cognify AI Video</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #080d25;
+            color: white;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #aaa;
+            margin-bottom: 25px;
+        }
+
+        .video-box {
+            background: #111936;
+            border-radius: 18px;
+            padding: 20px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            max-height: 650px;
+            border-radius: 12px;
+            background: black;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 5px solid #444;
+            border-top: 5px solid #8f7cff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .status {
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        .error {
+            color: #ff6b6b;
+            background: #30151b;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #7567ff;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #6255e8;
+        }
+        .progress-container {
+    margin: 35px auto 0;
+    max-width: 550px;
+    text-align: left;
+}
+
+.progress-step {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    opacity: 0.4;
+}
+
+.progress-step span {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.progress-step div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.progress-step small {
+    color: #aaa;
+}
+
+.progress-step.active {
+    opacity: 1;
+}
+
+.progress-step.active span {
+    background: #7567ff;
+}
+
+.progress-step.complete {
+    opacity: 1;
+}
+
+.progress-step.complete span {
+    background: #24b47e;
+}
+
+.progress-line {
+    height: 18px;
+    width: 2px;
+    background: #444;
+    margin-left: 28px;
+}
+.video-ready {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎬 Cognify AI Video</h1>
+
+    <div class="subtitle">
+        AI-generated study video for {{ notebook.title }}
+    </div>
+
+    <div class="video-box" id="videoBox">
+
+        <div class="loading" id="loadingBox">
+
+    <div class="spinner"></div>
+
+    <h2 id="statusTitle">
+        Preparing your video...
+    </h2>
+
+    <div class="status" id="statusText">
+        Starting Cognify AI...
+    </div>
+
+    <div class="progress-container">
+
+        <div class="progress-step" id="step1">
+            <span>1</span>
+            <div>
+                <strong>Prepare material</strong>
+                <small>Read your study sources</small>
+            </div>
+        </div>
+
+        <div class="progress-line"></div>
+
+        <div class="progress-step" id="step2">
+            <span>2</span>
+            <div>
+                <strong>Create narration</strong>
+                <small>Generate AI explanation</small>
+            </div>
+        </div>
+
+        <div class="progress-line"></div>
+
+        <div class="progress-step" id="step3">
+            <span>3</span>
+            <div>
+                <strong>Create video</strong>
+                <small>Generate MP4 with narration</small>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+    </div>
+
+</div>
+
+<script>
+
+const startUrl = "{% url 'start_video_generation' notebook.id %}";
+
+let resultId = null;
+let pollTimer = null;
+
+
+/*
+    Get CSRF token from Django cookie
+*/
+function getCookie(name) {
+
+    let cookieValue = null;
+
+    if (document.cookie && document.cookie !== "") {
+
+        const cookies = document.cookie.split(";");
+
+        for (let cookie of cookies) {
+
+            cookie = cookie.trim();
+
+            if (cookie.substring(0, name.length + 1) === (name + "=")) {
+
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+
+                break;
+            }
+        }
+    }
+
+    return cookieValue;
+}
+
+
+/*
+    Start video generation
+*/
+async function startGeneration() {
+
+    console.log("Starting Cognify video generation...");
+    console.log("Start URL:", startUrl);
+
+    try {
+
+        const response = await fetch(startUrl, {
+
+            method: "POST",
+
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "X-Requested-With": "XMLHttpRequest"
+            },
+
+            credentials: "same-origin"
+
+        });
+
+        console.log("Start response:", response.status);
+
+        const data = await response.json();
+
+        console.log("Start data:", data);
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.error || "Video generation could not be started."
+            );
+        }
+
+        resultId = data.result_id;
+
+        console.log("Video result ID:", resultId);
+
+        updateProgress(
+    data.step,
+    data.message
+);
+function updateProgress(step, message) {
+
+    const title =
+        document.getElementById("statusTitle");
+
+    const status =
+        document.getElementById("statusText");
+
+    title.innerText =
+        message || "Generating your video...";
+
+    status.innerText =
+        "Cognify AI is working on your study video.";
+
+    for (let i = 1; i <= 3; i++) {
+
+        const element =
+            document.getElementById("step" + i);
+
+        if (!element) {
+            continue;
+        }
+
+        element.classList.remove(
+            "active",
+            "complete"
+        );
+
+        if (i < step) {
+
+            element.classList.add(
+                "complete"
+            );
+
+        } else if (i === step) {
+
+            element.classList.add(
+                "active"
+            );
+        }
+    }
+}
+        pollStatus();
+
+    } catch (error) {
+
+        console.error("VIDEO START ERROR:", error);
+
+        showError(error.message);
+    }
+}
+
+
+/*
+    Check generation status
+*/
+async function pollStatus() {
+
+    if (!resultId) {
+        return;
+    }
+
+    const statusUrl =
+        "{% url 'video_status' notebook.id 999999 %}"
+        .replace("999999", resultId);
+
+    console.log("Checking:", statusUrl);
+
+    try {
+
+        const response = await fetch(
+            statusUrl,
+            {
+                method: "GET",
+                credentials: "same-origin"
+            }
+        );
+
+        console.log("Status response:", response.status);
+
+        const data = await response.json();
+
+        console.log("Status data:", data);
+
+        if (data.status === "ready") {
+
+            showVideo(data.video_url);
+
+            return;
+        }
+
+
+        if (data.status === "error") {
+
+            showError(
+                data.error || "Video generation failed."
+            );
+
+            return;
+        }
+
+
+        document.getElementById("statusTitle").innerText =
+            "Generating your video...";
+
+        document.getElementById("statusText").innerText =
+            "AI script and video are being created.";
+
+        pollTimer = setTimeout(
+            pollStatus,
+            2000
+        );
+
+    } catch (error) {
+
+        console.error("VIDEO STATUS ERROR:", error);
+
+        pollTimer = setTimeout(
+            pollStatus,
+            3000
+        );
+    }
+}
+
+
+/*
+    Show finished video
+*/
+function showVideo(videoUrl) {
+
+    console.log("VIDEO READY:", videoUrl);
+
+    const videoBox =
+        document.getElementById("videoBox");
+
+    videoBox.innerHTML = `
+        <div
+            class="video-ready"
+            style="width:100%;text-align:center;"
+        >
+
+            <h2>
+                🎉 Your Cognify video is ready!
+            </h2>
+
+            <video
+                id="generatedVideo"
+                controls
+                playsinline
+                preload="auto"
+                style="
+                    width:100%;
+                    max-height:650px;
+                    border-radius:12px;
+                    background:#000;
+                "
+            >
+                <source
+                    src="${videoUrl}"
+                    type="video/mp4"
+                >
+            </video>
+
+            <div style="
+                margin-top:12px;
+                display:flex;
+                justify-content:center;
+                gap:10px;
+            ">
+
+                <button
+                    type="button"
+                    id="backwardVideoButton"
+                >
+                    ⏪ 10 sec
+                </button>
+
+                <button
+                    type="button"
+                    id="forwardVideoButton"
+                >
+                    10 sec ⏩
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+
+    // Get elements AFTER innerHTML
+    const video =
+        document.getElementById("generatedVideo");
+
+    const backwardButton =
+        document.getElementById(
+            "backwardVideoButton"
+        );
+
+    const forwardButton =
+        document.getElementById(
+            "forwardVideoButton"
+        );
+
+
+    if (!video) {
+
+        console.error(
+            "VIDEO ELEMENT NOT FOUND"
+        );
+
+        return;
+    }
+
+
+    // BACKWARD 10 SECONDS
+    backwardButton.addEventListener(
+        "click",
+        function () {
+
+            console.log(
+                "BACKWARD CLICKED"
+            );
+
+            video.currentTime =
+                Math.max(
+                    0,
+                    video.currentTime - 10
+                );
+
+        }
+    );
+
+
+    // FORWARD 10 SECONDS
+    forwardButton.addEventListener(
+        "click",
+        function () {
+
+            console.log(
+                "FORWARD CLICKED"
+            );
+
+            if (
+                Number.isFinite(
+                    video.duration
+                )
+            ) {
+
+                video.currentTime =
+                    Math.min(
+                        video.duration,
+                        video.currentTime + 10
+                    );
+
+            }
+
+        }
+    );
+
+
+    // VIDEO METADATA
+    video.addEventListener(
+        "loadedmetadata",
+        function () {
+
+            console.log(
+                "VIDEO DURATION:",
+                video.duration
+            );
+
+        }
+    );
+
+
+    // VIDEO SEEKING
+    video.addEventListener(
+        "seeking",
+        function () {
+
+            console.log(
+                "SEEKING:",
+                video.currentTime
+            );
+
+        }
+    );
+
+
+    video.addEventListener(
+        "seeked",
+        function () {
+
+            console.log(
+                "SEEKED:",
+                video.currentTime
+            );
+
+        }
+    );
+
+
+    // VIDEO PLAY
+    video.addEventListener(
+        "play",
+        function () {
+
+            console.log(
+                "VIDEO PLAYING"
+            );
+
+        }
+    );
+
+
+    // VIDEO PAUSE
+    video.addEventListener(
+        "pause",
+        function () {
+
+            console.log(
+                "VIDEO PAUSED"
+            );
+
+        }
+    );
+
+
+    // VIDEO ERROR
+    video.addEventListener(
+        "error",
+        function () {
+
+            console.error(
+                "VIDEO ERROR:",
+                video.error
+            );
+
+        }
+    );
+
+
+    // Force browser to load video
+    video.load();
+
+}
+/*
+    Show error
+*/
+function showError(message) {
+
+    document.getElementById("videoBox").innerHTML = `
+
+        <div class="error">
+
+            <h2>❌ Video generation failed</h2>
+
+            <p>${message}</p>
+
+            <button onclick="location.reload()">
+                Try Again
+            </button>
+
+        </div>
+
+    `;
+    }
+    
+
+
+
+/*
+    Start automatically
+*/
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        console.log(
+            "Cognify video page loaded."
+        );
+
+        startGeneration();
+
+    }
+);
+
+</script>
+
+</body>
+</html>

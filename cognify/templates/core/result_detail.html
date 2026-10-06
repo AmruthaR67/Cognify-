@@ -1,0 +1,41 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ result.title }} - Cognify</title>
+
+    <link rel="stylesheet"
+          href="{% static 'core/style.css' %}">
+</head>
+
+<body>
+
+<div class="result-detail-page">
+
+    <a href="{% url 'history' %}">
+        ← Back to History
+    </a>
+
+    <h1>
+        {{ result.title }}
+    </h1>
+
+    <p>
+        {{ result.created_at|date:"d M Y" }}
+    </p>
+
+    <div class="result-detail-content">
+
+        {{ result.content|linebreaks }}
+
+    </div>
+
+</div>
+
+</body>
+</html>

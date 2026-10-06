@@ -1,0 +1,353 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<style>
+.faq-page {
+    min-height: calc(100vh - 70px);
+    background: #f5f7ff;
+    padding: 24px 35px;
+}
+
+.faq-container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.faq-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.faq-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.faq-heading-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background: #eee9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.faq-heading h1 {
+    margin: 0;
+    color: #28214d;
+    font-size: 25px;
+}
+
+.faq-description {
+    margin-top: 4px;
+    color: #85819b;
+    font-size: 13px;
+}
+
+.workspace-link {
+    color: #5b3df5;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.faq-toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.faq-search {
+    flex: 1;
+    height: 46px;
+    border: 1px solid #ddd9eb;
+    border-radius: 11px;
+    padding: 0 16px;
+    background: white;
+    outline: none;
+    font-size: 14px;
+}
+
+.generate-faq {
+    height: 46px;
+    padding: 0 20px;
+    border-radius: 11px;
+    background: #5b3df5;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.faq-card {
+    background: white;
+    border: 1px solid #e4e1ee;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.faq-question {
+    width: 100%;
+    border: 0;
+    background: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.faq-number {
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    background: #eee9ff;
+    color: #5b3df5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.faq-question-text {
+    flex: 1;
+    color: #30294d;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.faq-arrow {
+    color: #77718b;
+    transition: transform .2s;
+}
+
+.faq-answer {
+    display: none;
+    padding: 0 25px 20px 57px;
+    background: #fafaff;
+    color: #5d5870;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.faq-card.open .faq-answer {
+    display: block;
+}
+
+.faq-card.open .faq-arrow {
+    transform: rotate(180deg);
+}
+
+.faq-bottom {
+    margin-top: 20px;
+    background: #f0edff;
+    border-radius: 12px;
+    padding: 13px;
+    display: flex;
+    gap: 10px;
+}
+
+.faq-action {
+    border: 1px solid #d7d1eb;
+    background: white;
+    color: #5b3df5;
+    border-radius: 9px;
+    padding: 10px 17px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+@media(max-width: 700px) {
+    .faq-page {
+        padding: 18px;
+    }
+
+    .faq-header {
+        align-items: flex-start;
+    }
+
+    .faq-toolbar {
+        flex-direction: column;
+    }
+
+    .generate-faq {
+        justify-content: center;
+    }
+}
+</style>
+
+
+<div class="faq-page">
+
+    <div class="faq-container">
+
+        <div class="faq-header">
+
+            <div class="faq-heading">
+
+                <div class="faq-heading-icon">
+                    ❓
+                </div>
+
+                <div>
+
+                    <h1>FAQs</h1>
+
+                    <div class="faq-description">
+                        Common questions and detailed answers based on your notebook content.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <a
+                href="{% url 'workspace' notebook.id %}"
+                class="workspace-link"
+            >
+                ← Workspace
+            </a>
+
+        </div>
+
+
+        <div class="faq-toolbar">
+
+            <input
+                id="faqSearch"
+                class="faq-search"
+                type="text"
+                placeholder="🔍 Search FAQs..."
+            >
+
+            <a
+                href="{% url 'generate_faq' notebook.id %}"
+                class="generate-faq"
+            >
+                ✨ Generate New FAQs
+            </a>
+
+        </div>
+
+
+        <div class="faq-list" id="faqList">
+
+            {% for faq in faqs %}
+
+            <div class="faq-card">
+
+                <button
+                    type="button"
+                    class="faq-question"
+                    onclick="toggleFaq(this)"
+                >
+
+                    <span class="faq-number">
+                        {{ forloop.counter }}
+                    </span>
+
+                    <span class="faq-question-text">
+                        {{ faq.question }}
+                    </span>
+
+                    <span class="faq-arrow">
+                        ▼
+                    </span>
+
+                </button>
+
+                <div class="faq-answer">
+                    {{ faq.answer|linebreaks }}
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="faq-card">
+                <div style="padding:35px;text-align:center;color:#888;">
+                    No FAQs generated yet.
+                </div>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <div class="faq-bottom">
+
+            <a
+                href="{% url 'generate_faq' notebook.id %}"
+                class="faq-action"
+            >
+                ↻ Regenerate FAQs
+            </a>
+
+            <button
+                type="button"
+                class="faq-action"
+                onclick="window.print()"
+            >
+                ↓ Export
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function toggleFaq(button) {
+
+    const card = button.closest(".faq-card");
+
+    card.classList.toggle("open");
+
+}
+
+
+const searchBox = document.getElementById("faqSearch");
+
+searchBox.addEventListener("input", function () {
+
+    const search = this.value.toLowerCase();
+
+    document.querySelectorAll(".faq-card").forEach(function (card) {
+
+        const text = card.innerText.toLowerCase();
+
+        if (text.includes(search)) {
+            card.style.display = "";
+        } else {
+            card.style.display = "none";
+        }
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

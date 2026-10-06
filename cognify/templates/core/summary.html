@@ -1,0 +1,111 @@
+{% extends "core/base.html" %}
+
+{% block title %}Summary - {{ notebook.name }}{% endblock %}
+
+{% block content %}
+
+<div class="workspace-container">
+
+    <a href="{% url 'workspace' notebook.id %}" class="back-link">
+        ← Back to Notebook
+    </a>
+
+    <div class="workspace-card">
+
+        <h1>Generate Summary</h1>
+
+        <p>
+            Your extracted source text is ready for the AI summarization step.
+        </p>
+        <h2>Summary</h2>
+
+<div class="extracted-text">
+    {{ summary|linebreaks }}
+</div>
+
+        <h2>Source Content</h2>
+
+        <div class="extracted-text">
+            {{ source_text|linebreaks }}
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cognify - Summary</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .back {
+            text-decoration: none;
+            color: #555;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .summary {
+            line-height: 1.7;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <a
+        href="{% url 'notebook_detail' notebook.id %}"
+        class="back"
+    >
+        ← Back to Notebook
+    </a>
+
+    <div class="card">
+
+        <h1>📝 AI Summary</h1>
+
+        <p>
+            Summary of:
+            <strong>{{ notebook.name }}</strong>
+        </p>
+
+        <hr>
+
+        <div class="summary">
+            {{ summary }}
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

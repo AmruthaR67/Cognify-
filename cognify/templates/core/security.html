@@ -1,0 +1,120 @@
+{% extends "core/base.html" %}
+
+{% block title %}Security - Cognify{% endblock %}
+
+{% block content %}
+
+<div class="account-page">
+
+    <div class="account-header">
+        <h1>Security</h1>
+        <p>Manage your password and account security.</p>
+    </div>
+
+    <div class="account-tabs">
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'settings_page' %}">Settings</a>
+        <a href="{% url 'security' %}" class="active">Security</a>
+    </div>
+
+    <div class="account-card">
+
+        <h2>Change Password</h2>
+
+        <p class="account-description">
+            Update your Cognify account password.
+        </p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="security-message
+                    {% if message.tags == 'success' %}
+                        success
+                    {% else %}
+                        error
+                    {% endif %}
+                ">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="password-form">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="current_password">
+                    Current Password
+                </label>
+
+                <input
+                    type="password"
+                    id="current_password"
+                    name="current_password"
+                    placeholder="Enter your current password"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="new_password">
+                    New Password
+                </label>
+
+                <input
+                    type="password"
+                    id="new_password"
+                    name="new_password"
+                    placeholder="Enter your new password"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">
+                    Confirm New Password
+                </label>
+
+                <input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    placeholder="Confirm your new password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="primary-button">
+                Change Password
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="account-card">
+
+        <h2>Account Information</h2>
+
+        <div class="account-information">
+
+            <div>
+                <span>Username</span>
+                <strong>{{ request.user.username }}</strong>
+            </div>
+
+            <div>
+                <span>Email</span>
+                <strong>
+                    {{ request.user.email|default:"No email added" }}
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

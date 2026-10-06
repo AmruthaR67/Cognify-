@@ -1,0 +1,198 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<style>
+    .mock-test-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 24px;
+    }
+
+    .mock-test-header {
+        margin-bottom: 30px;
+    }
+
+    .mock-test-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+        color: #111b4d;
+    }
+
+    .mock-test-header p {
+        margin: 0;
+        color: #7180a8;
+        font-size: 16px;
+    }
+
+    .mock-test-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(40, 60, 120, 0.08);
+        border: 1px solid #edf1fa;
+    }
+
+    .mock-test-card h2 {
+        margin-top: 0;
+        color: #111b4d;
+    }
+
+    .mock-test-card p {
+        color: #7180a8;
+    }
+
+    .mock-test-button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 13px 24px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #4f46f5, #2878f0);
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        .mock-test-selection {
+    margin-top: 25px;
+    max-width: 500px;
+}
+
+.mock-test-selection label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #111b4d;
+}
+
+.mock-test-selection select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #dfe5f2;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #111b4d;
+    font-size: 15px;
+    outline: none;
+}
+
+.mock-test-selection select:focus {
+    border-color: #4f46f5;
+}
+    }
+    .mock-test-upload-button {
+    margin-top: 14px;
+    padding: 12px 20px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #111b4d;
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.mock-test-upload-button:hover {
+    opacity: 0.9;
+}
+.mock-test-success {
+    margin-top: 20px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: #e8f8ef;
+    color: #16834b;
+    font-weight: 600;
+}
+
+.mock-test-error {
+    margin-top: 20px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: #fff0f0;
+    color: #d9363e;
+    font-weight: 600;
+}
+</style>
+
+<div class="mock-test-page">
+
+    <div class="mock-test-header">
+        <h1>Mock Test</h1>
+        <p>Practice your knowledge and improve your performance.</p>
+    </div>
+
+    <div class="mock-test-card">
+
+        <h2>Start a Mock Test</h2>
+
+        <p>
+            Choose your study material and test yourself with
+            questions generated from your learning sources.
+        </p>
+
+        <form
+    method="POST"
+    enctype="multipart/form-data"
+    action="{% url 'mock_test' %}"
+    id="mock-test-form"
+>
+
+    {% csrf_token %}
+
+    <label for="study-material-file" class="mock-test-button">
+        Choose Study Material →
+    </label>
+
+    <input
+        type="file"
+        id="study-material-file"
+        name="study_material"
+        accept=".pdf,.txt,.doc,.docx"
+        hidden
+    >
+
+    <button
+        type="submit"
+        class="mock-test-upload-button"
+    >
+        Upload Study Material
+    </button>
+
+</form>
+{% if upload_success %}
+    <div class="mock-test-success">
+        ✓ {{ selected_file }} uploaded successfully.
+    </div>
+{% endif %}
+
+{% if error %}
+    <div class="mock-test-error">
+        {{ error }}
+    </div>
+{% endif %}
+    </div>
+
+</div>
+
+<script>
+    const studyMaterialFile = document.getElementById("study-material-file");
+
+    studyMaterialFile.addEventListener("change", function () {
+
+        if (this.files.length > 0) {
+
+            const selectedFile = this.files[0];
+
+            const button = document.querySelector(
+                'label[for="study-material-file"]'
+            );
+
+            button.textContent = selectedFile.name;
+        }
+
+    });
+</script>
+
+{% endblock %}

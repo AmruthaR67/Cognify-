@@ -1,0 +1,555 @@
+{% extends "core/base.html" %}
+
+{% block title %}My Notebooks - Cognify{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =====================================================
+       MY NOTEBOOKS
+       ===================================================== */
+
+    .my-notebooks-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 20px 60px;
+    }
+
+    .my-notebooks-header {
+        margin-bottom: 30px;
+    }
+
+    .my-notebooks-header h1 {
+        margin: 0 0 6px;
+        font-size: 32px;
+        font-weight: 750;
+        color: #111827;
+    }
+
+    .my-notebooks-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 15px;
+    }
+
+    /* =====================================================
+       NOTEBOOK GRID
+       ===================================================== */
+
+    .my-notebooks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    /* =====================================================
+       NOTEBOOK CARD
+       ===================================================== */
+
+    .my-notebook-card {
+        position: relative;
+        min-height: 240px;
+        padding: 24px;
+        border-radius: 18px;
+
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+
+        display: flex;
+        flex-direction: column;
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .my-notebook-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    }
+
+    /* =====================================================
+       NOTEBOOK TITLE
+       ===================================================== */
+
+    .my-notebook-title {
+        display: block !important;
+
+        margin: 0 0 10px !important;
+
+        color: #111827 !important;
+
+        font-size: 21px !important;
+        line-height: 1.3;
+        font-weight: 750 !important;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        overflow-wrap: anywhere;
+    }
+
+    /* =====================================================
+       DESCRIPTION
+       ===================================================== */
+
+    .my-notebook-description {
+        display: block !important;
+
+        margin: 0 0 18px !important;
+
+        color: #64748b !important;
+
+        font-size: 14px !important;
+        line-height: 1.6;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        overflow-wrap: anywhere;
+    }
+
+    /* =====================================================
+       SOURCE INFORMATION
+       ===================================================== */
+
+    .my-notebook-sources {
+        margin-top: auto;
+        margin-bottom: 18px;
+
+        padding: 12px 14px;
+
+        border-radius: 12px;
+
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+    .source-count {
+        display: block;
+
+        margin-bottom: 7px;
+
+        color: #334155 !important;
+
+        font-size: 13px;
+        font-weight: 700;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .source-list {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .source-name {
+        display: block;
+
+        color: #64748b !important;
+
+        font-size: 12px;
+        line-height: 1.4;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* =====================================================
+       OPEN BUTTON
+       ===================================================== */
+
+    .my-notebook-open {
+        display: inline-flex;
+
+        width: fit-content;
+
+        align-items: center;
+        justify-content: center;
+
+        padding: 10px 18px;
+
+        border-radius: 10px;
+
+        background: #633cff !important;
+        color: #ffffff !important;
+
+        font-size: 14px;
+        font-weight: 650;
+
+        text-decoration: none !important;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .my-notebook-open:hover {
+        background: #5330df !important;
+        color: #ffffff !important;
+        transform: translateY(-1px);
+    }
+
+    /* =====================================================
+       EMPTY STATE
+       ===================================================== */
+
+    .my-notebooks-empty {
+        padding: 50px 25px;
+
+        border-radius: 18px;
+
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+
+        text-align: center;
+
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .my-notebooks-empty h2 {
+        margin: 0 0 8px;
+
+        color: #111827 !important;
+
+        font-size: 22px;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .my-notebooks-empty p {
+        margin: 0;
+
+        color: #64748b !important;
+
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .create-notebook-button {
+        display: inline-flex;
+
+        margin-top: 18px;
+        padding: 12px 20px;
+
+        border-radius: 10px;
+
+        background: #633cff !important;
+        color: #ffffff !important;
+
+        text-decoration: none !important;
+        font-weight: 650;
+    }
+
+    /* =====================================================
+       DARK THEME
+       Supports the common theme class variations
+       ===================================================== */
+
+    body.dark .my-notebooks-header h1,
+    body.dark-theme .my-notebooks-header h1,
+    body.dark-mode .my-notebooks-header h1,
+    .dark .my-notebooks-header h1,
+    .dark-theme .my-notebooks-header h1,
+    [data-theme="dark"] .my-notebooks-header h1 {
+        color: #f8fafc !important;
+    }
+
+    body.dark .my-notebooks-header p,
+    body.dark-theme .my-notebooks-header p,
+    body.dark-mode .my-notebooks-header p,
+    .dark .my-notebooks-header p,
+    .dark-theme .my-notebooks-header p,
+    [data-theme="dark"] .my-notebooks-header p {
+        color: #94a3b8 !important;
+    }
+
+    /* Notebook card */
+    body.dark .my-notebook-card,
+    body.dark-theme .my-notebook-card,
+    body.dark-mode .my-notebook-card,
+    .dark .my-notebook-card,
+    .dark-theme .my-notebook-card,
+    [data-theme="dark"] .my-notebook-card {
+        background: #171827 !important;
+        border-color: #2d3042 !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.30);
+    }
+
+    /* IMPORTANT:
+       Notebook name remains visible in dark mode */
+    body.dark .my-notebook-title,
+    body.dark-theme .my-notebook-title,
+    body.dark-mode .my-notebook-title,
+    .dark .my-notebook-title,
+    .dark-theme .my-notebook-title,
+    [data-theme="dark"] .my-notebook-title {
+        color: #ffffff !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Description */
+    body.dark .my-notebook-description,
+    body.dark-theme .my-notebook-description,
+    body.dark-mode .my-notebook-description,
+    .dark .my-notebook-description,
+    .dark-theme .my-notebook-description,
+    [data-theme="dark"] .my-notebook-description {
+        color: #cbd5e1 !important;
+    }
+
+    /* Source box */
+    body.dark .my-notebook-sources,
+    body.dark-theme .my-notebook-sources,
+    body.dark-mode .my-notebook-sources,
+    .dark .my-notebook-sources,
+    .dark-theme .my-notebook-sources,
+    [data-theme="dark"] .my-notebook-sources {
+        background: #202132 !important;
+        border-color: #34374b !important;
+    }
+
+    /* Source count */
+    body.dark .source-count,
+    body.dark-theme .source-count,
+    body.dark-mode .source-count,
+    .dark .source-count,
+    .dark-theme .source-count,
+    [data-theme="dark"] .source-count {
+        color: #f1f5f9 !important;
+    }
+
+    /* SOURCE NAME - this fixes the invisible source name */
+    body.dark .source-name,
+    body.dark-theme .source-name,
+    body.dark-mode .source-name,
+    .dark .source-name,
+    .dark-theme .source-name,
+    [data-theme="dark"] .source-name {
+        color: #cbd5e1 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Empty state */
+    body.dark .my-notebooks-empty,
+    body.dark-theme .my-notebooks-empty,
+    body.dark-mode .my-notebooks-empty,
+    .dark .my-notebooks-empty,
+    .dark-theme .my-notebooks-empty,
+    [data-theme="dark"] .my-notebooks-empty {
+        background: #171827 !important;
+        border-color: #2d3042 !important;
+    }
+
+    body.dark .my-notebooks-empty h2,
+    body.dark-theme .my-notebooks-empty h2,
+    body.dark-mode .my-notebooks-empty h2,
+    .dark .my-notebooks-empty h2,
+    .dark-theme .my-notebooks-empty h2,
+    [data-theme="dark"] .my-notebooks-empty h2 {
+        color: #ffffff !important;
+    }
+
+    body.dark .my-notebooks-empty p,
+    body.dark-theme .my-notebooks-empty p,
+    body.dark-mode .my-notebooks-empty p,
+    .dark .my-notebooks-empty p,
+    .dark-theme .my-notebooks-empty p,
+    [data-theme="dark"] .my-notebooks-empty p {
+        color: #cbd5e1 !important;
+    }
+
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (max-width: 600px) {
+
+        .my-notebooks-page {
+            padding: 25px 15px 45px;
+        }
+
+        .my-notebooks-header h1 {
+            font-size: 27px;
+        }
+
+        .my-notebooks-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .my-notebook-card {
+            min-height: 220px;
+        }
+    }
+</style>
+
+
+<div class="my-notebooks-page">
+
+    <!-- =================================================
+         HEADER
+         ================================================= -->
+
+    <div class="my-notebooks-header">
+
+        <h1>
+            My Notebooks
+        </h1>
+
+        <p>
+            Continue your learning journey.
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         NOTEBOOKS
+         ================================================= -->
+
+    {% if notebooks %}
+
+        <div class="my-notebooks-grid">
+
+            {% for notebook in notebooks %}
+
+                <article class="my-notebook-card">
+
+                    <!-- Notebook name -->
+
+                    <h2 class="my-notebook-title">
+
+                        {% if notebook.name %}
+                            {{ notebook.name }}
+                        {% elif notebook.title %}
+                            {{ notebook.title }}
+                        {% else %}
+                            Untitled Notebook
+                        {% endif %}
+
+                    </h2>
+
+
+                    <!-- Description -->
+
+                    <p class="my-notebook-description">
+
+                        {% if notebook.description %}
+                            {{ notebook.description }}
+                        {% else %}
+                            No description available.
+                        {% endif %}
+
+                    </p>
+
+
+                    <!-- Sources -->
+
+                    <div class="my-notebook-sources">
+
+                        <span class="source-count">
+
+                            📄
+                            {{ notebook.sources.count }}
+                            Source{% if notebook.sources.count != 1 %}s{% endif %}
+
+                        </span>
+
+
+                        {% if notebook.sources.all %}
+
+                            <div class="source-list">
+
+                                {% for source in notebook.sources.all|slice:":3" %}
+
+                                    <span
+                                        class="source-name"
+                                        title="{% if source.name %}{{ source.name }}{% elif source.title %}{{ source.title }}{% elif source.file %}{{ source.file.name }}{% endif %}"
+                                    >
+
+                                        {% if source.name %}
+                                            {{ source.name }}
+
+                                        {% elif source.title %}
+                                            {{ source.title }}
+
+                                        {% elif source.file %}
+                                            {{ source.file.name }}
+
+                                        {% else %}
+                                            Source {{ forloop.counter }}
+                                        {% endif %}
+
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Open -->
+
+                    <a
+                        href="{% url 'notebook_detail' notebook.id %}"
+                        class="my-notebook-open"
+                    >
+                        Open →
+                    </a>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <!-- =================================================
+             EMPTY STATE
+             ================================================= -->
+
+        <div class="my-notebooks-empty">
+
+            <h2>
+                No notebooks yet
+            </h2>
+
+            <p>
+                Create your first notebook to start learning.
+            </p>
+
+            <a
+                href="{% url 'create_notebook' %}"
+                class="create-notebook-button"
+            >
+                + Create Notebook
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

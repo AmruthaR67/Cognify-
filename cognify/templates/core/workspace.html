@@ -1,0 +1,565 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div class="cognify-workspace"><!-- ================= HEADER ================= -->
+
+<div class="notebook-header">
+
+    <div>
+        <a href="{% url 'dashboard' %}" class="back-link">
+            ← My Notebooks
+        </a>
+
+        <h1>🧠 {{ notebook.name }}</h1>
+
+        <p>
+            {{ sources|length }} Sources
+            &nbsp;•&nbsp;
+            AI Chat
+        </p>
+    </div>
+
+</div>
+
+
+<!-- ================= 3 COLUMNS ================= -->
+
+<div class="workspace-grid">
+
+
+    <!-- ================= LEFT: SOURCES ================= -->
+
+    <div class="sources-panel">
+
+        <div class="panel-title">
+            <h2>Sources</h2>
+        </div>
+
+        <!-- Add Source -->
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            action="{% url 'upload_source' notebook.id %}"
+        >
+
+            {% csrf_token %}
+
+            <label class="add-source-button">
+
+                <span>＋</span>
+                Add Source
+
+                <input
+                    type="file"
+                    name="file"
+                    accept=".pdf,.docx,.pptx,.txt"
+                    onchange="this.form.submit()"
+                    hidden
+                >
+
+            </label>
+
+        </form>
+
+
+        <!-- Source List -->
+
+        <div class="source-list">
+
+            {% if sources %}
+
+                {% for source in sources %}
+
+                    <div class="source-card">
+
+                        <div class="source-icon">
+                            📄
+                        </div>
+
+                        <div class="source-details">
+
+                            <strong>
+                                {{ source.file.name|cut:"sources/" }}
+                            </strong>
+
+                            {% if source.extracted_text %}
+                                <small>✓ Text extracted</small>
+                            {% else %}
+                                <small>No text extracted</small>
+                            {% endif %}
+
+                        </div>
+
+                        <form
+                            method="POST"
+                            action="{% url 'delete_source' source.id %}"
+                            onsubmit="return confirm('Delete this source?');"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="delete-button"
+                            >
+                                ×
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty-sources">
+                    No sources added yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= CENTER: AI CHAT ================= -->
+
+    <div class="chat-panel">
+
+        <div class="panel-title chat-title">
+            <h2>🤖 AI Chat</h2>
+        </div>
+
+
+        <div class="chat-area">
+
+            {% if question %}
+
+                <div class="user-message">
+                    {{ question }}
+                </div>
+
+            {% endif %}
+
+
+            {% if answer %}
+
+                <div class="ai-response">
+
+                    <div class="ai-name">
+                        🧠 Cognify AI
+                    </div>
+
+                    <div class="answer-text">
+                        {{ answer|linebreaks }}
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="welcome-message">
+
+                    <div class="ai-avatar">
+                        🧠
+                    </div>
+
+                    <h3>Cognify AI</h3>
+
+                    <p>
+                        Ask a question about
+                        <strong>{{ notebook.name }}</strong>
+                        and get an answer based on your uploaded sources.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Question Form -->
+
+        <form
+            method="POST"
+            action="{% url 'ask_question' notebook.id %}"
+            class="question-form"
+        >
+
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="question"
+                placeholder="Ask a question..."
+                required
+            >
+
+            <button type="submit">
+                ➤
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- ================= RIGHT: SMART OUTPUTS ================= -->
+
+    <div class="outputs-panel">
+
+        <div class="panel-title">
+
+            <h2>Smart Outputs</h2>
+
+        </div>
+
+
+        <div class="generate-label">
+            ✨ Generate
+        </div>
+
+
+        <!-- Summary -->
+
+        <a
+            href="{% url 'generate_summary' notebook.id %}"
+            class="output-button"
+        >
+            📝
+            <span>Summary</span>
+        </a>
+
+
+        <!-- FAQ -->
+
+        <a href="{% url 'generate_faq' notebook.id %}" class="output-button">
+    ❓ <span>FAQs</span>
+</a>
+
+
+        <!-- Study Notes -->
+
+        
+    <a href="{% url 'generate_notes' notebook.id %}" class="output-button">
+    📚 <span>Study Notes</span>
+</a>
+
+
+        <!-- Flashcards -->
+
+        <a href="{% url 'generate_flashcards' notebook.id %}" class="output-button">
+    🃏 <span>Flashcards</span>
+</a>
+        <!-- Quiz -->
+
+        <a href="{% url 'generate_quiz' notebook.id %}" class="output-button">
+    📝 <span>Quiz</span>
+</a>
+
+
+        <!-- Diagram -->
+
+        <a href="{% url 'generate_diagram' notebook.id %}" class="output-button">
+    📊 <span>Diagram</span>
+</a>
+
+        <!-- Video -->
+
+        <a
+    href="{% url 'generate_video' notebook.id %}"
+    class="output-button"
+>
+    🎥
+    <span>Video Overview</span>
+</a>
+
+
+        <!-- Audio -->
+
+        <a
+    href="{% url 'generate_audio' notebook.id %}"
+    class="output-button"
+>
+    🔊
+    <span>Audio Overview</span>
+</a>
+        
+    </div>
+
+</div>
+
+</div><style>
+
+/* ================= GENERAL ================= */
+
+.cognify-workspace {
+    padding: 25px 35px;
+    min-height: calc(100vh - 60px);
+    background: #f8f9fc;
+}
+
+.notebook-header {
+    margin-bottom: 20px;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #777;
+    font-size: 14px;
+}
+
+.notebook-header h1 {
+    margin: 10px 0 5px;
+    font-size: 28px;
+}
+
+.notebook-header p {
+    color: #777;
+}
+
+
+/* ================= GRID ================= */
+
+.workspace-grid {
+    display: grid;
+    grid-template-columns: 270px 1fr 280px;
+    gap: 18px;
+    height: calc(100vh - 170px);
+}
+
+
+/* ================= PANELS ================= */
+
+.sources-panel,
+.chat-panel,
+.outputs-panel {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.panel-title {
+    padding: 18px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.panel-title h2 {
+    margin: 0;
+    font-size: 17px;
+}
+
+
+/* ================= SOURCES ================= */
+
+.sources-panel {
+    overflow-y: auto;
+}
+
+.add-source-button {
+    display: block;
+    margin: 15px;
+    padding: 13px;
+    border: 1px dashed #aaa;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    color: #444;
+}
+
+.add-source-button:hover {
+    background: #f5f5ff;
+}
+
+.source-list {
+    padding: 0 15px 15px;
+}
+
+.source-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+}
+
+.source-icon {
+    font-size: 20px;
+}
+
+.source-details {
+    flex: 1;
+    overflow: hidden;
+}
+
+.source-details strong {
+    display: block;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.source-details small {
+    color: #777;
+}
+
+.delete-button {
+    border: none;
+    background: transparent;
+    color: #999;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.empty-sources {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+}
+
+
+/* ================= CHAT ================= */
+
+.chat-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-area {
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto;
+}
+
+.welcome-message {
+    margin-top: 80px;
+    padding: 25px;
+    border-radius: 12px;
+    background: #f5f7ff;
+}
+
+.ai-avatar {
+    font-size: 28px;
+}
+
+.welcome-message h3 {
+    margin-bottom: 8px;
+}
+
+.welcome-message p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.user-message {
+    background: #6655d9;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin-bottom: 18px;
+    margin-left: auto;
+    max-width: 75%;
+    width: fit-content;
+}
+
+.ai-response {
+    background: #f3f5fa;
+    padding: 18px;
+    border-radius: 14px;
+    line-height: 1.6;
+}
+
+.ai-name {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.question-form {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    border-top: 1px solid #eee;
+}
+
+.question-form input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 13px;
+    outline: none;
+}
+
+.question-form button {
+    width: 48px;
+    border: none;
+    border-radius: 10px;
+    background: #5b45d6;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+
+/* ================= OUTPUTS ================= */
+
+.outputs-panel {
+    padding-bottom: 15px;
+    overflow-y: auto;
+}
+
+.generate-label {
+    padding: 15px 20px 8px;
+    color: #7662d8;
+    font-weight: 600;
+}
+
+.output-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 15px;
+    padding: 14px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #333;
+    background: white;
+}
+
+.output-button:hover {
+    background: #f5f5ff;
+    border-color: #cfc7ff;
+}
+
+.output-button span {
+    font-size: 14px;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 1000px) {
+
+    .workspace-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .sources-panel,
+    .chat-panel,
+    .outputs-panel {
+        min-height: 400px;
+    }
+
+}
+
+</style>{% endblock %}

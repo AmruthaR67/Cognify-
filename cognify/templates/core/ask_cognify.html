@@ -1,0 +1,1751 @@
+{% extends "core/base.html" %}
+
+{% block title %}Ask Cognify{% endblock %}
+
+{% block content %}
+
+<style>
+
+.ask-page {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 24px 60px;
+}
+
+.ask-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.ask-header h1 {
+    margin: 0 0 10px;
+    color: #20243a;
+    font-size: 34px;
+}
+
+.ask-header p {
+    color: #70798c;
+    margin: 0;
+}
+
+.url-card {
+    background: #fff;
+    border: 1px solid #e2e6ef;
+    border-radius: 18px;
+    padding: 28px;
+}
+
+.url-input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.url-input {
+    flex: 1;
+    height: 54px;
+    padding: 0 17px;
+    border: 1px solid #e2e6ef;
+    border-radius: 10px;
+    color: #20243a;
+    outline: none;
+    font-size: 15px;
+}
+
+.url-input:focus {
+    border-color: #4f6df5;
+    box-shadow: 0 0 0 3px rgba(79,109,245,.12);
+}
+
+.url-button {
+    height: 54px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 10px;
+    background: #4f6df5;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.url-button:hover {
+    background: #405bd8;
+}
+
+.url-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.url-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.text-button {
+    border: none;
+    background: transparent;
+    color: #70798c;
+    cursor: pointer;
+    padding: 4px 0;
+}
+
+.text-button:hover {
+    color: #4f6df5;
+}
+
+.status {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.status.loading {
+    display: block;
+    background: #eef1ff;
+    color: #4f6df5;
+}
+
+.status.success {
+    display: block;
+    background: #eefbf3;
+    color: #247a45;
+}
+
+.status.partial {
+    display: block;
+    background: #fff8e8;
+    color: #8a6418;
+}
+
+.status.error {
+    display: block;
+    background: #fff1f1;
+    color: #b33a3a;
+}
+
+.source-preview {
+    display: none;
+    margin-top: 25px;
+    padding: 20px;
+    border: 1px solid #e2e6ef;
+    border-radius: 14px;
+}
+
+.source-preview h2 {
+    margin: 0 0 8px;
+    color: #20243a;
+}
+
+.source-type {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px 9px;
+    border-radius: 7px;
+    background: #eef1ff;
+    color: #4f6df5;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.source-url {
+    color: #70798c;
+    font-size: 13px;
+    word-break: break-all;
+}
+
+.source-status {
+    color: #70798c;
+    margin-bottom: 0;
+    line-height: 1.6;
+}
+
+
+/* ================================
+   YOUTUBE VIDEO
+================================ */
+
+.video-preview {
+    display: none;
+    margin-top: 25px;
+}
+
+.video-preview h3 {
+    margin-bottom: 15px;
+    color: #20243a;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #000;
+}
+
+.video-container iframe {
+    display: block;
+    width: 100%;
+    min-height: 450px;
+    border: none;
+}
+
+
+/* ================================
+   OUTPUT SECTION
+================================ */
+
+.output-section {
+    display: none;
+    margin-top: 30px;
+}
+
+.output-section h2 {
+    color: #20243a;
+}
+
+.output-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+
+.output-card {
+    padding: 22px 15px;
+    background: white;
+    border: 1px solid #e2e6ef;
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: .2s;
+}
+
+.output-card:hover,
+.output-card.selected {
+    border-color: #4f6df5;
+    box-shadow: 0 5px 18px rgba(79,109,245,.12);
+}
+
+.output-icon {
+    font-size: 25px;
+    margin-bottom: 12px;
+}
+
+.output-card strong {
+    display: block;
+    color: #20243a;
+    margin-bottom: 5px;
+}
+
+.output-card span {
+    color: #70798c;
+    font-size: 12px;
+}
+
+
+/* ================================
+   CREATE BUTTON
+================================ */
+
+.generate-button {
+    margin-top: 20px;
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 10px;
+    background: #4f6df5;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.generate-button:hover {
+    background: #405bd8;
+}
+
+.generate-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ================================
+   RESULT
+================================ */
+
+.result {
+    display: none;
+    margin-top: 30px;
+    padding: 25px;
+    background: white;
+    border: 1px solid #e2e6ef;
+    border-radius: 14px;
+}
+
+.result h2 {
+    color: #20243a;
+    margin-top: 0;
+}
+
+.result-content {
+    white-space: pre-wrap;
+    color: #20243a;
+    line-height: 1.7;
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 750px) {
+
+    .url-input-row {
+        flex-direction: column;
+    }
+
+    .output-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .video-container iframe {
+        min-height: 240px;
+    }
+}
+
+@media (max-width: 500px) {
+
+    .ask-page {
+        margin: 25px auto;
+        padding: 0 15px 40px;
+    }
+
+    .url-card {
+        padding: 18px;
+    }
+
+    .ask-header h1 {
+        font-size: 28px;
+    }
+
+    .output-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+
+<div class="ask-page">
+
+    <div class="ask-header">
+
+        <h1>Ask Cognify</h1>
+
+        <p>
+            Paste a public URL and turn it into
+            something you can learn from.
+        </p>
+
+    </div>
+
+
+    <div class="url-card">
+
+        <!-- =====================================
+             SOURCE FORM
+        ====================================== -->
+
+        <form id="sourceForm" method="post">
+
+            {% csrf_token %}
+
+            <div class="url-input-row">
+
+                <input
+                    type="url"
+                    id="sourceUrl"
+                    name="url"
+                    class="url-input"
+                    placeholder="Paste a URL from YouTube, Instagram, Facebook, websites, PDFs, or anywhere..."
+                    autocomplete="url"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    id="processButton"
+                    class="url-button"
+                    aria-label="Process URL"
+                >
+                    →
+                </button>
+
+            </div>
+
+
+            <div class="url-actions">
+
+                <button
+                    type="button"
+                    id="pasteButton"
+                    class="text-button"
+                >
+                    Paste
+                </button>
+
+                <button
+                    type="button"
+                    id="clearButton"
+                    class="text-button"
+                >
+                    Clear
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <!-- =====================================
+             STATUS
+        ====================================== -->
+
+        <div
+            id="status"
+            class="status"
+            role="status"
+            aria-live="polite"
+        ></div>
+
+
+        <!-- =====================================
+             SOURCE PREVIEW
+        ====================================== -->
+
+        <div
+            id="sourcePreview"
+            class="source-preview"
+        >
+
+            <h2 id="sourceTitle"></h2>
+
+            <div
+                id="sourceType"
+                class="source-type"
+            ></div>
+
+            <div
+                id="sourceUrlPreview"
+                class="source-url"
+            ></div>
+
+            <p
+                id="sourceStatus"
+                class="source-status"
+            ></p>
+
+
+            <!-- =================================
+                 STEP 6 - VIDEO PREVIEW
+            ================================== -->
+
+            <div
+                id="videoPreview"
+                class="video-preview"
+            >
+
+                <h3>Watch Source</h3>
+
+                <div class="video-container">
+
+                    <iframe
+                        id="youtubePlayer"
+                        width="100%"
+                        height="450"
+                        src=""
+                        title="YouTube video player"
+                        frameborder="0"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen>
+                    </iframe>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             STEP 7 - SMART OUTPUTS
+        ====================================== -->
+
+        <div
+            id="outputSection"
+            class="output-section"
+        >
+
+            <h2>
+                What would you like to create?
+            </h2>
+
+
+            <div class="output-grid">
+
+
+                <button
+                    type="button"
+                    class="output-card"
+                    data-type="summary"
+                >
+
+                    <div class="output-icon">
+                        📝
+                    </div>
+
+                    <strong>
+                        Summary
+                    </strong>
+
+                    <span>
+                        Get a concise summary
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="output-card"
+                    data-type="notes"
+                >
+
+                    <div class="output-icon">
+                        📚
+                    </div>
+
+                    <strong>
+                        Study Notes
+                    </strong>
+
+                    <span>
+                        Turn it into notes
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="output-card"
+                    data-type="audio"
+                >
+
+                    <div class="output-icon">
+                        🔊
+                    </div>
+
+                    <strong>
+                        Audio
+                    </strong>
+
+                    <span>
+                        Listen to the content
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="output-card"
+                    data-type="video"
+                >
+
+                    <div class="output-icon">
+                        🎬
+                    </div>
+
+                    <strong>
+                        Video
+                    </strong>
+
+                    <span>
+                        Create a visual lesson
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="output-card"
+                    data-type="quiz"
+                >
+
+                    <div class="output-icon">
+                        🧠
+                    </div>
+
+                    <strong>
+                        Quiz
+                    </strong>
+
+                    <span>
+                        Test your knowledge
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================
+                 STEP 8 - CREATE BUTTON
+            ================================== -->
+
+            <button
+                type="button"
+                id="generateButton"
+                class="generate-button"
+            >
+                Create
+            </button>
+
+        </div>
+
+
+        <!-- =====================================
+             STEP 9 - RESULT
+        ====================================== -->
+
+        <div
+            id="result"
+            class="result"
+        >
+
+            <h2 id="resultTitle"></h2>
+
+            <div
+                id="resultContent"
+                class="result-content"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ============================================
+   STEP 10 - MAIN VARIABLES
+============================================ */
+
+let currentSourceId = null;
+let selectedOutput = null;
+
+
+/* ============================================
+   ELEMENTS
+============================================ */
+
+const form =
+    document.getElementById("sourceForm");
+
+const urlInput =
+    document.getElementById("sourceUrl");
+
+const processButton =
+    document.getElementById("processButton");
+
+const statusBox =
+    document.getElementById("status");
+
+const pasteButton =
+    document.getElementById("pasteButton");
+
+const clearButton =
+    document.getElementById("clearButton");
+
+const generateButton =
+    document.getElementById("generateButton");
+
+const sourcePreview =
+    document.getElementById("sourcePreview");
+
+const outputSection =
+    document.getElementById("outputSection");
+
+const resultBox =
+    document.getElementById("result");
+
+const sourceTitle =
+    document.getElementById("sourceTitle");
+
+const sourceType =
+    document.getElementById("sourceType");
+
+const sourceUrlPreview =
+    document.getElementById("sourceUrlPreview");
+
+const sourceStatus =
+    document.getElementById("sourceStatus");
+
+const videoPreview =
+    document.getElementById("videoPreview");
+
+const youtubePlayer =
+    document.getElementById("youtubePlayer");
+
+const resultTitle =
+    document.getElementById("resultTitle");
+
+const resultContent =
+    document.getElementById("resultContent");
+
+
+/* ============================================
+   CSRF
+============================================ */
+
+function getCookie(name) {
+
+    const cookies =
+        document.cookie.split(";");
+
+    for (let cookie of cookies) {
+
+        cookie = cookie.trim();
+
+        if (
+            cookie.startsWith(name + "=")
+        ) {
+
+            return decodeURIComponent(
+                cookie.substring(
+                    name.length + 1
+                )
+            );
+
+        }
+
+    }
+
+    return null;
+}
+
+
+/* ============================================
+   STATUS
+============================================ */
+
+function showStatus(message, type) {
+
+    statusBox.textContent =
+        message;
+
+    statusBox.className =
+        "status " + type;
+
+}
+
+
+/* ============================================
+   YOUTUBE VIDEO ID
+============================================ */
+
+function getYouTubeVideoId(url) {
+
+    try {
+
+        const parsedUrl =
+            new URL(url);
+
+
+        /* youtu.be/VIDEO_ID */
+
+        if (
+            parsedUrl.hostname ===
+            "youtu.be"
+        ) {
+
+            return parsedUrl.pathname
+                .replace("/", "")
+                .split("/")[0];
+
+        }
+
+
+        /* youtube.com/watch?v=VIDEO_ID */
+
+        if (
+            parsedUrl.hostname.includes(
+                "youtube.com"
+            )
+        ) {
+
+            const videoId =
+                parsedUrl.searchParams.get("v");
+
+            if (videoId) {
+
+                return videoId;
+
+            }
+
+
+            /* youtube.com/shorts/VIDEO_ID */
+
+            const parts =
+                parsedUrl.pathname.split("/");
+
+            const shortsIndex =
+                parts.indexOf("shorts");
+
+            if (
+                shortsIndex !== -1 &&
+                parts[shortsIndex + 1]
+            ) {
+
+                return parts[
+                    shortsIndex + 1
+                ];
+
+            }
+
+
+            /* youtube.com/embed/VIDEO_ID */
+
+            const embedIndex =
+                parts.indexOf("embed");
+
+            if (
+                embedIndex !== -1 &&
+                parts[embedIndex + 1]
+            ) {
+
+                return parts[
+                    embedIndex + 1
+                ];
+
+            }
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "YouTube URL error:",
+            error
+        );
+
+    }
+
+    return null;
+}
+
+
+/* ============================================
+   SHOW YOUTUBE VIDEO
+============================================ */
+
+function showYouTubeVideo(url) {
+
+    const videoId =
+        getYouTubeVideoId(url);
+
+
+    if (!videoId) {
+
+        videoPreview.style.display =
+            "none";
+
+        youtubePlayer.src =
+            "";
+
+        return;
+
+    }
+
+
+    youtubePlayer.src =
+        "https://www.youtube.com/embed/" +
+        encodeURIComponent(videoId) +
+        "?rel=0";
+
+
+    videoPreview.style.display =
+        "block";
+
+}
+
+
+/* ============================================
+   RESET SOURCE UI
+============================================ */
+
+function resetSourceUI() {
+
+    currentSourceId = null;
+
+    selectedOutput = null;
+
+
+    sourcePreview.style.display =
+        "none";
+
+    outputSection.style.display =
+        "none";
+
+    resultBox.style.display =
+        "none";
+
+
+    videoPreview.style.display =
+        "none";
+
+    youtubePlayer.src =
+        "";
+
+
+    sourceTitle.textContent =
+        "";
+
+    sourceType.textContent =
+        "";
+
+    sourceUrlPreview.textContent =
+        "";
+
+    sourceStatus.textContent =
+        "";
+
+    resultTitle.textContent =
+        "";
+
+    resultContent.textContent =
+        "";
+
+
+    document.querySelectorAll(
+        ".output-card"
+    ).forEach(
+        function(card) {
+
+            card.classList.remove(
+                "selected"
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================
+   PROCESS SOURCE
+============================================ */
+
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const url =
+            urlInput.value.trim();
+
+
+        if (!url) {
+
+            showStatus(
+                "Please enter a URL.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        currentSourceId =
+            null;
+
+        selectedOutput =
+            null;
+
+
+        processButton.disabled =
+            true;
+
+        processButton.textContent =
+            "…";
+
+
+        sourcePreview.style.display =
+            "none";
+
+        outputSection.style.display =
+            "none";
+
+        resultBox.style.display =
+            "none";
+
+
+        showStatus(
+            "Reading your source…",
+            "loading"
+        );
+
+
+        try {
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "url",
+                url
+            );
+
+
+            const response =
+                await fetch(
+                    "{% url 'process_ask_source' %}",
+                    {
+                        method: "POST",
+
+                        body: formData,
+
+                        headers: {
+                            "X-CSRFToken":
+                                getCookie(
+                                    "csrftoken"
+                                )
+                        }
+                    }
+                );
+
+
+            let data;
+
+
+const rawResponse = await response.text();
+
+console.log("RAW SERVER RESPONSE:", rawResponse);
+
+try {
+    data = JSON.parse(rawResponse);
+} catch (error) {
+    console.error("JSON PARSE ERROR:", error);
+    throw new Error(
+        "The server returned an invalid response."
+    );
+}
+
+if (!response.ok || !data?.success) {
+    throw new Error(
+        data?.error ||
+        "We couldn't retrieve this source."
+    );
+}
+
+            /* =================================
+               STEP 6
+               SAVE SOURCE ID
+            ================================= */
+
+            currentSourceId =
+                data.source_id;
+
+
+            if (!currentSourceId) {
+
+                throw new Error(
+                    "The source was processed, but the server did not return a source ID."
+                );
+
+            }
+
+
+            /* =================================
+               SOURCE INFORMATION
+            ================================= */
+
+            sourceTitle.textContent =
+                data.title ||
+                "Untitled source";
+
+
+            sourceType.textContent =
+                data.source_type ||
+                "Source";
+
+
+            sourceUrlPreview.textContent =
+                data.url ||
+                url;
+
+
+            sourceStatus.textContent =
+                data.access_message ||
+                "Source processed successfully.";
+
+
+            /* =================================
+               SHOW SOURCE PREVIEW
+            ================================= */
+
+            sourcePreview.style.display =
+                "block";
+
+
+            /* =================================
+               SHOW YOUTUBE VIDEO
+            ================================= */
+
+            showYouTubeVideo(
+                data.url || url
+            );
+
+
+            /* =================================
+               ACCESS STATUS
+            ================================= */
+
+            if (
+                data.access_status ===
+                "success"
+            ) {
+
+                showStatus(
+                    data.access_message ||
+                    "Your source is ready.",
+                    "success"
+                );
+
+            }
+
+            else if (
+                data.access_status ===
+                "partial"
+            ) {
+
+                showStatus(
+                    data.access_message ||
+                    "The source was only partially accessible.",
+                    "partial"
+                );
+
+            }
+
+            else {
+
+                showStatus(
+                    data.access_message ||
+                    "The source could not be fully processed.",
+                    "error"
+                );
+
+            }
+
+
+            /* =================================
+               SHOW SMART OUTPUTS
+            ================================= */
+
+            if (
+                data.access_status ===
+                "success" ||
+
+                data.access_status ===
+                "partial"
+            ) {
+
+                outputSection.style.display =
+                    "block";
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Ask Cognify error:",
+                error
+            );
+
+
+            showStatus(
+                error.message ||
+                "We couldn't retrieve this source.",
+                "error"
+            );
+
+        }
+
+        finally {
+
+            processButton.disabled =
+                false;
+
+            processButton.textContent =
+                "→";
+
+        }
+
+    }
+);
+
+
+/* ============================================
+   STEP 7
+   SMART OUTPUT CARD CLICK
+============================================ */
+
+document.querySelectorAll(
+    ".output-card"
+).forEach(
+    function(card) {
+
+        card.addEventListener(
+            "click",
+            function() {
+
+
+                if (!currentSourceId) {
+
+                    showStatus(
+                        "Please process a source first.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                /* Select card */
+
+                document.querySelectorAll(
+                    ".output-card"
+                ).forEach(
+                    function(item) {
+
+                        item.classList.remove(
+                            "selected"
+                        );
+
+                    }
+                );
+
+
+                this.classList.add(
+                    "selected"
+                );
+
+
+                selectedOutput =
+                    this.dataset.type;
+
+
+                /*
+                 * Show selected type
+                 * and generate it.
+                 */
+
+                generateOutput();
+
+            }
+        );
+
+    }
+);
+
+
+/* ============================================
+   STEP 8
+   GENERATE OUTPUT
+============================================ */
+
+async function generateOutput() {
+
+
+    if (!currentSourceId) {
+
+        showStatus(
+            "Please process a source first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!selectedOutput) {
+
+        showStatus(
+            "Choose an output format first.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    generateButton.disabled =
+        true;
+
+    generateButton.textContent =
+        "Creating…";
+
+
+    showStatus(
+        "Preparing your " +
+        selectedOutput +
+        "…",
+        "loading"
+    );
+
+
+    try {
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "output_type",
+            selectedOutput
+        );
+
+
+        /*
+         * IMPORTANT:
+         *
+         * This URL must match
+         * your Django URL pattern.
+         */
+
+        const response =
+            await fetch(
+                `/ask-cognify/${currentSourceId}/generate/`,
+                {
+                    method: "POST",
+
+                    body: formData,
+
+                    headers: {
+                        "X-CSRFToken":
+                            getCookie(
+                                "csrftoken"
+                            )
+                    }
+                }
+            );
+
+
+        let data;
+
+
+        try {
+
+            data =
+                await response.json();
+
+        }
+
+        catch (error) {
+
+            throw new Error(
+                "The server returned an invalid response."
+            );
+
+        }
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.error ||
+                "Unable to create this output."
+            );
+
+        }
+
+
+        /* =================================
+           RESULT
+        ================================= */
+
+        let outputText = "";
+
+
+        /*
+         * Supports both:
+         *
+         * data.content
+         *
+         * and
+         *
+         * data.output.content
+         */
+
+        if (
+            data.content
+        ) {
+
+            outputText =
+                data.content;
+
+        }
+
+        else if (
+            data.output &&
+            data.output.content
+        ) {
+
+            outputText =
+                data.output.content;
+
+        }
+
+
+        if (!outputText) {
+
+            outputText =
+                "The server completed the request, but no content was returned.";
+
+        }
+
+
+        resultTitle.textContent =
+            data.title ||
+            selectedOutput.charAt(0).toUpperCase() +
+            selectedOutput.slice(1);
+
+
+        resultContent.textContent =
+            outputText;
+
+
+        resultBox.style.display =
+            "block";
+
+
+        /*
+         * Scroll to result
+         */
+
+        resultBox.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+
+        showStatus(
+            "Your " +
+            selectedOutput +
+            " is ready.",
+            "success"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Output generation error:",
+            error
+        );
+
+
+        showStatus(
+            error.message ||
+            "Unable to create the output.",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        generateButton.disabled =
+            false;
+
+        generateButton.textContent =
+            "Create";
+
+    }
+
+}
+
+
+/* ============================================
+   STEP 9
+   CREATE BUTTON
+============================================ */
+
+generateButton.addEventListener(
+    "click",
+    async function() {
+
+        if (!currentSourceId) {
+
+            showStatus(
+                "Please process a source first.",
+                "error"
+            );
+
+            return;
+        }
+
+        if (!selectedOutput) {
+
+            showStatus(
+                "Choose an output format first.",
+                "error"
+            );
+
+            return;
+        }
+
+        generateButton.disabled = true;
+        generateButton.textContent = "Creating…";
+
+        showStatus(
+            "Cognify is creating your " +
+            selectedOutput +
+            "…",
+            "loading"
+        );
+
+        try {
+
+            const formData = new FormData();
+
+            formData.append(
+                "output_type",
+                selectedOutput
+            );
+
+            // IMPORTANT:
+            // Create the URL ONLY after currentSourceId exists.
+            const generateUrl =
+                "{% url 'generate_ask_output' 0 %}"
+                .replace(
+                    "/0/",
+                    "/" + currentSourceId + "/"
+                );
+
+            const response = await fetch(
+                generateUrl,
+                {
+                    method: "POST",
+
+                    body: formData,
+
+                    headers: {
+                        "X-CSRFToken":
+                            getCookie("csrftoken")
+                    }
+                }
+            );
+
+            let data;
+
+            try {
+
+                data = await response.json();
+
+            } catch (jsonError) {
+
+                throw new Error(
+                    "The server returned an invalid response."
+                );
+
+            }
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.error ||
+                    "Cognify could not create this output."
+                );
+
+            }
+
+            // -----------------------------------------
+            // DISPLAY RESULT
+            // -----------------------------------------
+
+            resultTitle.textContent =
+                getOutputTitle(
+                    data.output.type
+                );
+
+            resultContent.textContent =
+                data.output.content;
+
+            resultBox.style.display =
+                "block";
+
+            showStatus(
+                "Your " +
+                getOutputTitle(data.output.type) +
+                " is ready.",
+                "success"
+            );
+
+            // Scroll to result
+            resultBox.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Generate output error:",
+                error
+            );
+
+            showStatus(
+                error.message ||
+                "Something went wrong while creating the output.",
+                "error"
+            );
+
+        }
+
+        finally {
+
+            generateButton.disabled =
+                false;
+
+            generateButton.textContent =
+                "Create";
+
+        }
+
+    }
+);
+function getOutputTitle(type) {
+
+    const titles = {
+
+        summary: "Summary",
+
+        notes: "Study Notes",
+
+        audio: "Audio Overview",
+
+        video: "Video Lesson",
+
+        quiz: "Quiz"
+
+    };
+
+    return titles[type] || "Cognify Output";
+}
+
+/* ============================================
+   STEP 10
+   CLEAR
+============================================ */
+
+clearButton.addEventListener(
+    "click",
+    function() {
+
+        urlInput.value =
+            "";
+
+        resetSourceUI();
+
+
+        statusBox.className =
+            "status";
+
+        statusBox.textContent =
+            "";
+
+
+        urlInput.focus();
+
+    }
+);
+
+
+/* ============================================
+   PASTE
+============================================ */
+
+pasteButton.addEventListener(
+    "click",
+    async function() {
+
+        try {
+
+            const text =
+                await navigator.clipboard.readText();
+
+
+            if (!text) {
+
+                showStatus(
+                    "Your clipboard is empty.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            urlInput.value =
+                text.trim();
+
+
+            urlInput.focus();
+
+        }
+
+        catch (error) {
+
+            showStatus(
+                "Clipboard access is unavailable. Please paste the URL manually.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,287 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Verify Email - Cognify</title>
+
+    <link rel="stylesheet"
+          href="{% static 'core/style.css' %}">
+
+</head>
+
+
+<body class="auth-page">
+
+
+<div class="auth-container">
+
+
+    <!-- ================= OTP FORM ================= -->
+
+    <div class="auth-card">
+
+        <div class="auth-logo">
+
+            <div class="logo-icon">
+                ✦
+            </div>
+
+            <span>
+                Cognify
+            </span>
+
+        </div>
+
+
+        <div class="auth-heading">
+
+            <h1>
+                Verify Your Email
+            </h1>
+
+            <p>
+                We've sent a 6-digit OTP to
+                your email address.
+            </p>
+
+        </div>
+
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <form method="POST"
+              id="otpForm">
+
+            {% csrf_token %}
+
+
+            <!-- Hidden OTP -->
+
+            <input
+                type="hidden"
+                name="otp"
+                id="otp"
+            >
+
+
+            <!-- OTP BOXES -->
+
+            <div class="otp-container">
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-box"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                >
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-box"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-box"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-box"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-box"
+                    inputmode="numeric"
+                >
+
+                <input
+                    type="text"
+                    maxlength="1"
+                    class="otp-box"
+                    inputmode="numeric"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary full-btn">
+
+                Verify OTP
+
+            </button>
+
+
+            <p class="otp-timer">
+
+                Resend OTP in
+                <span id="timer">
+                    45
+                </span>
+                seconds
+
+            </p>
+
+
+        </form>
+
+
+        <div class="back-link">
+
+            <a href="{% url 'register' %}">
+                ← Back to Register
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================= RIGHT SIDE ================= -->
+
+    <div class="auth-side">
+
+        <div class="side-glow"></div>
+
+        <div class="email-icon">
+            ✉
+        </div>
+
+        <h2>
+            Check Your Email
+        </h2>
+
+        <p>
+            Enter the code sent to your
+            email to verify your account.
+        </p>
+
+    </div>
+
+
+</div>
+
+
+<!-- ================= OTP JAVASCRIPT ================= -->
+
+<script>
+
+    const boxes =
+        document.querySelectorAll(".otp-box");
+
+    const hiddenOtp =
+        document.getElementById("otp");
+
+
+    boxes.forEach((box, index) => {
+
+        box.addEventListener("input", function () {
+
+            this.value =
+                this.value.replace(/\D/g, "");
+
+            if (this.value &&
+                index < boxes.length - 1) {
+
+                boxes[index + 1].focus();
+
+            }
+
+            updateOTP();
+
+        });
+
+
+        box.addEventListener("keydown", function(event) {
+
+            if (
+                event.key === "Backspace" &&
+                !this.value &&
+                index > 0
+            ) {
+
+                boxes[index - 1].focus();
+
+            }
+
+        });
+
+    });
+
+
+    function updateOTP() {
+
+        let value = "";
+
+        boxes.forEach(function(box) {
+
+            value += box.value;
+
+        });
+
+        hiddenOtp.value = value;
+
+    }
+
+
+    // Countdown
+
+    let time = 45;
+
+    const timer =
+        document.getElementById("timer");
+
+
+    const countdown =
+        setInterval(function() {
+
+            time--;
+
+            timer.textContent = time;
+
+            if (time <= 0) {
+
+                clearInterval(countdown);
+
+                timer.textContent = "0";
+
+            }
+
+        }, 1000);
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,520 @@
+{% extends "core/base.html" %}
+
+{% block title %}Saved Results - Cognify{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =====================================================
+       SAVED RESULTS PAGE
+       ===================================================== */
+
+    .saved-page {
+        min-height: calc(100vh - 80px);
+        padding: 40px;
+        background: var(--saved-bg);
+        color: var(--saved-text);
+        transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .saved-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    /* ---------- THEME VARIABLES ---------- */
+
+    :root {
+        --saved-bg: #f7f8ff;
+        --saved-card: #ffffff;
+        --saved-text: #25245a;
+        --saved-muted: #77778a;
+        --saved-border: #e5e5ef;
+        --saved-input: #ffffff;
+        --saved-input-border: #dddafa;
+        --saved-icon-bg: #eee8ff;
+        --saved-purple: #633cff;
+        --saved-purple-light: #f0ebff;
+        --saved-shadow: 0 5px 25px rgba(50, 40, 120, 0.08);
+    }
+
+    html[data-theme="dark"] {
+        --saved-bg: #0f1020;
+        --saved-card: #181a2b;
+        --saved-text: #f4f4ff;
+        --saved-muted: #a9abc2;
+        --saved-border: #303249;
+        --saved-input: #151727;
+        --saved-input-border: #34364d;
+        --saved-icon-bg: #292345;
+        --saved-purple: #8b6cff;
+        --saved-purple-light: #292345;
+        --saved-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    /* ---------- HEADER ---------- */
+
+    .saved-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 28px;
+    }
+
+    .saved-header-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+
+        background: linear-gradient(
+            135deg,
+            #633cff,
+            #9a45e8
+        );
+
+        color: #ffffff;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 22px;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .saved-header h1 {
+        margin: 0;
+        color: var(--saved-text);
+        font-size: 28px;
+        line-height: 1.2;
+    }
+
+    .saved-header p {
+        margin: 5px 0 0;
+        color: var(--saved-muted);
+        font-size: 14px;
+    }
+
+    /* ---------- SEARCH ---------- */
+
+    .saved-search-box {
+        background: var(--saved-card);
+        border: 1px solid var(--saved-border);
+        padding: 18px;
+        border-radius: 18px;
+        box-shadow: var(--saved-shadow);
+        margin-bottom: 28px;
+    }
+
+    .saved-search-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .saved-search-form input {
+        flex: 1;
+        min-width: 0;
+
+        padding: 14px 16px;
+
+        background: var(--saved-input);
+        color: var(--saved-text);
+
+        border: 1px solid var(--saved-input-border);
+        border-radius: 12px;
+
+        outline: none;
+        font-size: 15px;
+
+        transition:
+            border-color 0.2s ease,
+            background 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .saved-search-form input::placeholder {
+        color: var(--saved-muted);
+    }
+
+    .saved-search-form input:focus {
+        border-color: var(--saved-purple);
+    }
+
+    .saved-search-form button {
+        border: 0;
+
+        padding: 0 25px;
+
+        border-radius: 12px;
+
+        background: var(--saved-purple);
+        color: #ffffff;
+
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .saved-search-form button:hover {
+        opacity: 0.9;
+    }
+
+    /* ---------- TABS ---------- */
+
+    .saved-tabs {
+        display: flex;
+        gap: 30px;
+
+        border-bottom: 1px solid var(--saved-border);
+
+        margin-bottom: 0;
+    }
+
+    .saved-tabs a {
+        padding: 14px 5px;
+
+        text-decoration: none;
+
+        color: var(--saved-muted);
+
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .saved-tabs a:hover {
+        color: var(--saved-purple);
+    }
+
+    .saved-tabs .active {
+        color: var(--saved-purple);
+
+        border-bottom: 3px solid var(--saved-purple);
+
+        font-weight: 700;
+    }
+
+    /* ---------- RESULT ---------- */
+
+    .saved-result {
+        background: var(--saved-card);
+
+        border-bottom: 1px solid var(--saved-border);
+
+        padding: 20px;
+
+        display: flex;
+        align-items: center;
+        gap: 18px;
+
+        transition:
+            background 0.25s ease,
+            border-color 0.25s ease;
+    }
+
+    .saved-result:first-of-type {
+        border-radius: 14px 14px 0 0;
+    }
+
+    .saved-result:last-of-type {
+        border-radius: 0 0 14px 14px;
+        border-bottom: 0;
+    }
+
+    .saved-result-icon {
+        width: 45px;
+        height: 45px;
+
+        border-radius: 12px;
+
+        background: var(--saved-icon-bg);
+        color: var(--saved-purple);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 20px;
+
+        flex-shrink: 0;
+    }
+
+    .saved-result-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .saved-result-title {
+        color: var(--saved-text);
+
+        font-weight: 700;
+        font-size: 16px;
+
+        margin-bottom: 6px;
+
+        word-break: break-word;
+    }
+
+    .saved-result-date {
+        color: var(--saved-muted);
+        font-size: 13px;
+    }
+
+    .saved-result-type {
+        color: var(--saved-purple);
+
+        font-size: 13px;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+    .saved-remove-btn {
+        border: 0;
+
+        background: var(--saved-purple-light);
+        color: var(--saved-purple);
+
+        padding: 8px 14px;
+
+        border-radius: 9px;
+
+        cursor: pointer;
+
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .saved-remove-btn:hover {
+        opacity: 0.85;
+    }
+
+    /* ---------- EMPTY ---------- */
+
+    .saved-empty {
+        background: var(--saved-card);
+
+        border: 1px solid var(--saved-border);
+
+        padding: 60px 30px;
+
+        text-align: center;
+
+        border-radius: 16px;
+
+        color: var(--saved-muted);
+
+        box-shadow: var(--saved-shadow);
+    }
+
+    .saved-empty h3 {
+        margin: 0 0 10px;
+
+        color: var(--saved-text);
+
+        font-size: 20px;
+    }
+
+    .saved-empty p {
+        margin: 0;
+
+        color: var(--saved-muted);
+    }
+
+    /* ---------- MOBILE ---------- */
+
+    @media (max-width: 700px) {
+
+        .saved-page {
+            padding: 25px 16px;
+        }
+
+        .saved-search-form {
+            flex-direction: column;
+        }
+
+        .saved-search-form button {
+            min-height: 45px;
+        }
+
+        .saved-result {
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .saved-result-info {
+            width: calc(100% - 65px);
+        }
+
+        .saved-result-type {
+            margin-left: 63px;
+        }
+
+        .saved-remove-btn {
+            margin-left: auto;
+        }
+    }
+</style>
+
+
+<div class="saved-page">
+
+    <div class="saved-container">
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <div class="saved-header">
+
+            <div class="saved-header-icon">
+                ★
+            </div>
+
+            <div>
+                <h1>
+                    Saved Results
+                </h1>
+
+                <p>
+                    Access your saved Cognify outputs
+                </p>
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SEARCH
+             ================================================= -->
+
+        <div class="saved-search-box">
+
+            <form
+                method="GET"
+                class="saved-search-form"
+            >
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ query|default:'' }}"
+                    placeholder="Search saved results..."
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- =================================================
+             TABS
+             ================================================= -->
+
+        <div class="saved-tabs">
+
+            <a href="{% url 'history' %}">
+                Recent History
+            </a>
+
+            <a
+                href="{% url 'saved_results' %}"
+                class="active"
+            >
+                Saved Results
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             SAVED RESULTS
+             ================================================= -->
+
+        {% for result in results %}
+
+            <div class="saved-result">
+
+                <div class="saved-result-icon">
+
+                    {% if result.kind == "summary" %}
+                        📄
+                    {% elif result.kind == "quiz" %}
+                        📝
+                    {% elif result.kind == "flashcards" %}
+                        🧠
+                    {% elif result.kind == "diagram" %}
+                        📊
+                    {% else %}
+                        ✨
+                    {% endif %}
+
+                </div>
+
+
+                <div class="saved-result-info">
+
+                    <div class="saved-result-title">
+                        {{ result.title }}
+                    </div>
+
+                    <div class="saved-result-date">
+                        {{ result.created_at|date:"d M Y" }}
+                    </div>
+
+                </div>
+
+
+                <div class="saved-result-type">
+                    {{ result.kind|title }}
+                </div>
+
+
+                <form
+                    method="POST"
+                    action="{% url 'toggle_saved' result.id %}"
+                >
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="next"
+                        value="{% url 'saved_results' %}"
+                    >
+
+                    <button
+                        type="submit"
+                        class="saved-remove-btn"
+                    >
+                        ★ Saved
+                    </button>
+
+                </form>
+
+            </div>
+
+        {% empty %}
+
+            <div class="saved-empty">
+
+                <h3>
+                    No saved results
+                </h3>
+
+                <p>
+                    Save an AI result from History and it will appear here.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,300 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<style>
+
+.notes-page {
+    min-height: calc(100vh - 70px);
+    background: #f5f7ff;
+    padding: 24px 35px;
+}
+
+.notes-container {
+    max-width: 1150px;
+    margin: auto;
+}
+
+.notes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.notes-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.notes-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #eee9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+}
+
+.notes-heading h1 {
+    margin: 0;
+    color: #29234f;
+    font-size: 25px;
+}
+
+.notes-description {
+    color: #85819b;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.notes-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.notes-button {
+    border: 1px solid #dcd8eb;
+    background: white;
+    color: #5b3df5;
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.notes-button.primary {
+    background: #5b3df5;
+    border-color: #5b3df5;
+    color: white;
+}
+
+.notes-layout {
+    display: grid;
+    grid-template-columns: 235px minmax(0, 1fr);
+    gap: 17px;
+}
+
+.toc-card {
+    background: white;
+    border: 1px solid #e4e1ef;
+    border-radius: 14px;
+    padding: 16px;
+    height: fit-content;
+}
+
+.toc-title {
+    color: #30294f;
+    font-weight: 700;
+    margin-bottom: 13px;
+}
+
+.toc-item {
+    display: block;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 9px;
+    color: #66617b;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.toc-item.active {
+    background: #eee9ff;
+    color: #5b3df5;
+    font-weight: 600;
+}
+
+.notes-card {
+    background: white;
+    border: 1px solid #e4e1ef;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 7px 25px rgba(40,30,90,.05);
+}
+
+.notes-content {
+    color: #4c4762;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.notes-content h1,
+.notes-content h2,
+.notes-content h3 {
+    color: #30294f;
+    margin-top: 22px;
+}
+
+.notes-content p {
+    margin-bottom: 14px;
+}
+
+.notes-content ul {
+    padding-left: 22px;
+}
+
+.notes-content li {
+    margin-bottom: 7px;
+}
+
+.notes-section {
+    margin-bottom: 20px;
+}
+
+.notes-section-title {
+    padding: 9px 13px;
+    border-radius: 8px;
+    background: #f0edff;
+    color: #51429a;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.notes-tip {
+    margin-top: 22px;
+    padding: 14px;
+    border-radius: 10px;
+    background: #f1edff;
+    color: #6b6583;
+    font-size: 12px;
+}
+
+@media(max-width:800px) {
+
+    .notes-page {
+        padding: 18px;
+    }
+
+    .notes-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .notes-layout {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+
+<div class="notes-page">
+
+    <div class="notes-container">
+
+
+        <div class="notes-header">
+
+            <div class="notes-heading">
+
+                <div class="notes-icon">
+                    📚
+                </div>
+
+                <div>
+
+                    <h1>Study Notes</h1>
+
+                    <div class="notes-description">
+                        Organized, easy-to-understand notes based on your notebook content.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="notes-actions">
+
+                <a
+                    href="{% url 'generate_notes' notebook.id %}"
+                    class="notes-button"
+                >
+                    ✏️ Regenerate
+                </a>
+
+                <button
+                    type="button"
+                    class="notes-button primary"
+                    onclick="window.print()"
+                >
+                    ↓ Export
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="notes-layout">
+
+
+            <!-- TABLE OF CONTENTS -->
+
+            <div class="toc-card">
+
+                <div class="toc-title">
+                    Table of Contents
+                </div>
+
+                <a href="#introduction" class="toc-item active">
+                    1 &nbsp; Introduction
+                </a>
+
+                <a href="#key-points" class="toc-item">
+                    2 &nbsp; Key Points
+                </a>
+
+                <a href="#definitions" class="toc-item">
+                    3 &nbsp; Important Definitions
+                </a>
+
+                <a href="#examples" class="toc-item">
+                    4 &nbsp; Examples
+                </a>
+
+                <a href="#applications" class="toc-item">
+                    5 &nbsp; Applications
+                </a>
+
+                <a href="#summary" class="toc-item">
+                    6 &nbsp; Summary
+                </a>
+
+            </div>
+
+
+            <!-- NOTES -->
+
+            <div class="notes-card">
+
+                <div class="notes-content">
+
+                    {{ result.content|linebreaks }}
+
+                </div>
+
+
+                <div class="notes-tip">
+
+                    💡 Tip: Focus on key concepts and practice with
+                    real-world examples for better understanding.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

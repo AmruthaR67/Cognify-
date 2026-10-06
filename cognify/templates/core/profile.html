@@ -1,0 +1,322 @@
+{% extends "core/base.html" %}
+
+{% block title %}Profile - Cognify{% endblock %}
+
+{% block content %}
+
+<style>
+
+.profile-page {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #633cff, #8b5cf6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.profile-header h1 {
+    margin: 0;
+    color: #29245b;
+}
+
+.profile-header p {
+    margin: 5px 0 0;
+    color: #777;
+}
+
+
+/* Tabs */
+
+.account-tabs {
+    display: flex;
+    gap: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 30px;
+}
+
+.account-tabs a {
+    padding: 14px 22px;
+    text-decoration: none;
+    color: #666;
+    font-weight: 600;
+    border-radius: 10px 10px 0 0;
+}
+
+.account-tabs a:hover {
+    color: #633cff;
+    background: #f5f2ff;
+}
+
+.account-tabs .active {
+    color: #633cff;
+    border-bottom: 3px solid #633cff;
+}
+
+
+/* Cards */
+
+.profile-card {
+    background: white;
+    border-radius: 18px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,.07);
+}
+
+.profile-card h2 {
+    margin-top: 0;
+    color: #29245b;
+}
+
+.profile-card p {
+    color: #666;
+}
+
+
+/* Form */
+
+.profile-form label {
+    display: block;
+    margin: 18px 0 8px;
+    font-weight: 600;
+}
+
+.profile-form input,
+.profile-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.profile-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.profile-button {
+    margin-top: 20px;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 10px;
+    background: #633cff;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+/* Info */
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #777;
+}
+
+.info-value {
+    font-weight: 600;
+    color: #29245b;
+}
+
+
+/* Messages */
+
+.profile-message {
+    padding: 13px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background: #e9fff0;
+    color: #17743c;
+}
+
+</style>
+
+
+<div class="profile-page">
+
+
+    <!-- Profile Header -->
+
+    <div class="profile-header">
+
+        <div class="profile-avatar">
+            {{ request.user.first_name|first|upper }}
+        </div>
+
+        <div>
+
+            <h1>
+                {{ request.user.first_name|default:"Student" }}
+            </h1>
+
+            <p>
+                {{ request.user.email }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- Account Navigation -->
+
+    <div class="account-tabs">
+
+        <a
+            href="{% url 'profile' %}"
+            class="active"
+        >
+            👤 Profile
+        </a>
+
+        <a href="{% url 'settings_page' %}">
+            ⚙ Settings
+        </a>
+
+        <a href="{% url 'security' %}">
+            🔒 Security
+        </a>
+
+    </div>
+
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="profile-message">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- Profile Information -->
+
+    <div class="profile-card">
+
+        <h2>Profile Information</h2>
+
+        <p>
+            Update your personal information.
+        </p>
+
+
+        <form method="POST" class="profile-form">
+
+            {% csrf_token %}
+
+            <label>
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                name="full_name"
+                value="{{ request.user.first_name }}"
+                required
+            >
+
+
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                name="email"
+                value="{{ request.user.email }}"
+                required
+            >
+
+
+            <label>
+                Bio
+            </label>
+
+            <textarea
+                name="bio"
+                placeholder="Tell us something about yourself..."
+            >{{ profile.bio }}</textarea>
+
+
+            <button
+                type="submit"
+                class="profile-button"
+            >
+                Save Changes
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- Account Information -->
+
+    <div class="profile-card">
+
+        <h2>Account Information</h2>
+
+        <div class="info-row">
+
+            <span class="info-label">
+                Username
+            </span>
+
+            <span class="info-value">
+                {{ request.user.username }}
+            </span>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span class="info-label">
+                Email
+            </span>
+
+            <span class="info-value">
+                {{ request.user.email }}
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,348 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cognify - AI Research & Learning Assistant</title>
+
+    <link rel="stylesheet" href="{% static 'core/style.css' %}">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <div class="logo">
+            <div class="logo-icon">✦</div>
+            <span>Cognify</span>
+        </div>
+
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </nav>
+
+        <div class="nav-buttons">
+            <a href="{% url 'login' %}" class="btn btn-login">
+                Login
+            </a>
+
+            <a href="{% url 'register' %}" class="btn btn-primary">
+                Get Started
+            </a>
+        </div>
+
+    </header>
+
+
+    <!-- ================= HERO SECTION ================= -->
+
+    <section class="hero" id="home">
+
+        <div class="hero-content">
+
+            <div class="hero-text">
+
+                <div class="small-badge">
+                    ✦ AI-Powered Learning
+                </div>
+
+                <h1>
+                    Cognify
+                </h1>
+
+                <h2>
+                    AI Research & Learning Assistant
+                </h2>
+
+                <p class="hero-tagline">
+                    Think. Learn. Understand.
+                </p>
+
+                <p class="hero-description">
+                    Turn your documents into knowledge.
+                    Upload, chat, summarize, and generate
+                    study materials with the power of AI.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="{% url 'register' %}"
+                       class="btn btn-primary big-btn">
+                        Get Started
+                    </a>
+
+                    <a href="{% url 'login' %}"
+                       class="btn btn-outline big-btn">
+                        Login
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- AI Illustration -->
+
+            <div class="hero-illustration">
+
+                <div class="glow-circle"></div>
+
+                <div class="ai-robot">
+
+                    <div class="robot-head">
+
+                        <div class="robot-eye"></div>
+                        <div class="robot-eye"></div>
+
+                    </div>
+
+                    <div class="robot-body">
+                        <div class="robot-screen">
+                            ✦
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="floating-card card-one">
+                    📄
+                </div>
+
+                <div class="floating-card card-two">
+                    📚
+                </div>
+
+                <div class="floating-card card-three">
+                    🧠
+                </div>
+
+                <div class="floating-card card-four">
+                    ✨
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FEATURES ================= -->
+
+    <section class="features-section" id="features">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                POWERFUL FEATURES
+            </p>
+
+            <h2>
+                Everything You Need to Learn Smarter
+            </h2>
+
+            <p>
+                Cognify helps students and researchers
+                understand information faster.
+            </p>
+
+        </div>
+
+
+        <div class="feature-grid">
+
+            <!-- Feature 1 -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    📄
+                </div>
+
+                <h3>
+                    Smart Document Analysis
+                </h3>
+
+                <p>
+                    Upload your learning materials and
+                    understand them with AI.
+                </p>
+
+                <span>
+                    PDF, DOCX, PPTX, TXT
+                </span>
+
+            </div>
+
+
+            <!-- Feature 2 -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    📚
+                </div>
+
+                <h3>
+                    Multiple File Formats
+                </h3>
+
+                <p>
+                    Work with different types of documents
+                    in one intelligent workspace.
+                </p>
+
+                <span>
+                    Easy document management
+                </span>
+
+            </div>
+
+
+            <!-- Feature 3 -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    🧠
+                </div>
+
+                <h3>
+                    AI-Powered Learning
+                </h3>
+
+                <p>
+                    Generate summaries, quizzes, flashcards,
+                    notes and more.
+                </p>
+
+                <span>
+                    Smarter study experience
+                </span>
+
+            </div>
+
+
+            <!-- Feature 4 -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    🔒
+                </div>
+
+                <h3>
+                    Secure & Private
+                </h3>
+
+                <p>
+                    Keep your notebooks and learning
+                    materials organized and protected.
+                </p>
+
+                <span>
+                    Your data, your control
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= ABOUT ================= -->
+
+    <section class="about-section" id="about">
+
+        <div class="about-content">
+
+            <div class="about-icon">
+                🧠
+            </div>
+
+            <div>
+
+                <p class="section-label">
+                    ABOUT COGNIFY
+                </p>
+
+                <h2>
+                    Learn. Research. Understand.
+                </h2>
+
+                <p>
+                    Cognify is an AI Research & Learning
+                    Assistant designed to help students
+                    organize documents, ask questions,
+                    understand complex topics and create
+                    useful study materials.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CONTACT ================= -->
+
+    <section class="contact-section" id="contact">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                GET STARTED
+            </p>
+
+            <h2>
+                Start Your Learning Journey
+            </h2>
+
+            <p>
+                Create your Cognify account and begin
+                learning smarter.
+            </p>
+
+            <a href="{% url 'register' %}"
+               class="btn btn-primary big-btn">
+                Create Your Account
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="logo">
+            <div class="logo-icon">✦</div>
+            <span>Cognify</span>
+        </div>
+
+        <p>
+            AI Research & Learning Assistant
+        </p>
+
+        <p class="copyright">
+            © 2026 Cognify. All rights reserved.
+        </p>
+
+    </footer>
+
+
+</body>
+</html>

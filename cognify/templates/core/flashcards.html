@@ -1,0 +1,403 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<style>
+
+.flashcard-page {
+    min-height: calc(100vh - 70px);
+    background: #f5f7ff;
+    padding: 25px;
+}
+
+.flashcard-container {
+    max-width: 850px;
+    margin: auto;
+    background: white;
+    border: 1px solid #e4e1ef;
+    border-radius: 18px;
+    min-height: 650px;
+    box-shadow: 0 8px 30px rgba(40, 30, 90, 0.06);
+}
+
+.flashcard-header {
+    height: 75px;
+    border-bottom: 1px solid #eceaf2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+}
+
+.flashcard-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.flashcard-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #eee9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+}
+
+.flashcard-title h1 {
+    margin: 0;
+    font-size: 21px;
+    color: #29234f;
+}
+
+.close-button {
+    border: none;
+    background: transparent;
+    font-size: 25px;
+    color: #5b3df5;
+    cursor: pointer;
+}
+
+.flashcard-body {
+    padding: 45px 55px;
+}
+
+.card-counter {
+    text-align: center;
+    color: #77718b;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.progress-container {
+    height: 7px;
+    background: #eceaf5;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 35px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #5b3df5;
+    transition: width .3s;
+}
+
+.flashcard {
+    min-height: 380px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #f2eaff, #e9f0ff);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 45px;
+    text-align: center;
+}
+
+.flashcard-brain {
+    font-size: 65px;
+    margin-bottom: 25px;
+}
+
+.flashcard-question {
+    font-size: 30px;
+    font-weight: 700;
+    color: #242044;
+    max-width: 650px;
+    line-height: 1.35;
+}
+
+.flashcard-answer {
+    display: none;
+    font-size: 18px;
+    color: #55506b;
+    max-width: 650px;
+    line-height: 1.7;
+    margin-top: 20px;
+}
+
+.flip-button {
+    margin-top: 30px;
+    background: #5b3df5;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 55px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.flashcard-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.nav-button {
+    border: 1px solid #ddd9eb;
+    background: white;
+    color: #5b3df5;
+    border-radius: 11px;
+    padding: 13px 30px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.nav-button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+@media(max-width:700px) {
+
+    .flashcard-page {
+        padding: 12px;
+    }
+
+    .flashcard-body {
+        padding: 25px;
+    }
+
+    .flashcard {
+        min-height: 330px;
+    }
+
+    .flashcard-question {
+        font-size: 23px;
+    }
+
+}
+
+</style>
+
+
+<div class="flashcard-page">
+
+    <div class="flashcard-container">
+
+        <div class="flashcard-header">
+
+            <div class="flashcard-title">
+
+                <div class="flashcard-icon">
+                    🧠
+                </div>
+
+                <h1>Flashcards</h1>
+
+            </div>
+
+            <a
+                href="{% url 'workspace' notebook.id %}"
+                class="close-button"
+            >
+                ×
+            </a>
+
+        </div>
+
+
+        <div class="flashcard-body">
+
+            <div class="card-counter">
+                Card <span id="currentCard">1</span>
+                of
+                <span id="totalCards">{{ flashcards|length }}</span>
+            </div>
+
+
+            <div class="progress-container">
+
+                <div
+                    class="progress-bar"
+                    id="progressBar"
+                ></div>
+
+            </div>
+
+
+            <div class="flashcard">
+
+                <div class="flashcard-brain">
+                    🧠
+                </div>
+
+                <div
+                    class="flashcard-question"
+                    id="question"
+                ></div>
+
+                <div
+                    class="flashcard-answer"
+                    id="answer"
+                ></div>
+
+                <button
+                    type="button"
+                    class="flip-button"
+                    id="flipButton"
+                    onclick="flipCard()"
+                >
+                    Flip Card
+                </button>
+
+            </div>
+
+
+            <div class="flashcard-navigation">
+
+                <button
+                    type="button"
+                    class="nav-button"
+                    id="previousButton"
+                    onclick="previousCard()"
+                >
+                    ← Previous
+                </button>
+
+                <button
+                    type="button"
+                    class="nav-button"
+                    id="nextButton"
+                    onclick="nextCard()"
+                >
+                    Next →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{{ flashcards|json_script:"flashcards-data" }}
+
+
+<script>
+
+const flashcards =
+    JSON.parse(
+        document.getElementById("flashcards-data").textContent
+    );
+
+let currentIndex = 0;
+let flipped = false;
+
+
+function displayCard() {
+
+    if (!flashcards.length) {
+        document.getElementById("question").innerText =
+            "No flashcards generated.";
+
+        return;
+    }
+
+    const card = flashcards[currentIndex];
+
+    document.getElementById("question").innerText =
+        card.question;
+
+    document.getElementById("answer").innerText =
+        card.answer;
+
+    document.getElementById("currentCard").innerText =
+        currentIndex + 1;
+
+    document.getElementById("totalCards").innerText =
+        flashcards.length;
+
+
+    const progress =
+        ((currentIndex + 1) / flashcards.length) * 100;
+
+    document.getElementById("progressBar").style.width =
+        progress + "%";
+
+
+    flipped = false;
+
+    document.getElementById("answer").style.display =
+        "none";
+
+    document.getElementById("flipButton").innerText =
+        "Flip Card";
+
+
+    document.getElementById("previousButton").disabled =
+        currentIndex === 0;
+
+    document.getElementById("nextButton").disabled =
+        currentIndex === flashcards.length - 1;
+
+}
+
+
+function flipCard() {
+
+    const answer =
+        document.getElementById("answer");
+
+    const button =
+        document.getElementById("flipButton");
+
+    flipped = !flipped;
+
+    if (flipped) {
+
+        answer.style.display = "block";
+
+        button.innerText =
+            "Hide Answer";
+
+    } else {
+
+        answer.style.display = "none";
+
+        button.innerText =
+            "Flip Card";
+
+    }
+
+}
+
+
+function nextCard() {
+
+    if (currentIndex < flashcards.length - 1) {
+
+        currentIndex++;
+
+        displayCard();
+
+    }
+
+}
+
+
+function previousCard() {
+
+    if (currentIndex > 0) {
+
+        currentIndex--;
+
+        displayCard();
+
+    }
+
+}
+
+
+displayCard();
+
+</script>
+
+{% endblock %}

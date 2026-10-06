@@ -1,0 +1,604 @@
+/* =====================================================
+   COGNIFY DASHBOARD
+   BURGUNDY & ROSE THEME
+   Only affects .dashboard-page
+   ===================================================== */
+
+.dashboard-page {
+
+    --burgundy: #722F46;
+    --burgundy-dark: #5A2437;
+    --rose: #C98299;
+    --rose-light: #E8C0CC;
+
+    --background: #FCF7F8;
+    --white: #FFFFFF;
+
+    --text: #29242A;
+    --muted: #81737A;
+
+    --border: #F0DDE3;
+
+    background: var(--background);
+    color: var(--text);
+}
+
+
+/* =====================================================
+   SIDEBAR
+   ===================================================== */
+
+.dashboard-page .sidebar {
+
+    background: linear-gradient(
+        180deg,
+        #722F46 0%,
+        #63273D 100%
+    );
+
+    color: white;
+}
+
+
+/* Logo */
+
+.dashboard-page .sidebar-logo {
+    color: #FFFFFF;
+}
+
+.dashboard-page .logo-icon {
+
+    background: var(--rose);
+    color: white;
+}
+
+
+/* Sidebar user */
+
+.dashboard-page .sidebar-user {
+    color: #FFFFFF;
+}
+
+.dashboard-page .user-avatar {
+
+    background: #E8C0CC;
+    color: var(--burgundy);
+}
+
+
+/* Sidebar navigation */
+
+.dashboard-page .sidebar-nav a,
+.dashboard-page .sidebar-bottom a {
+
+    color: #F9E9EE;
+}
+
+
+/* Active navigation */
+
+.dashboard-page .sidebar-nav a.active {
+
+    background: var(--rose);
+    color: #FFFFFF;
+
+    box-shadow:
+        0 5px 15px rgba(201, 130, 153, 0.25);
+}
+
+
+/* Navigation hover */
+
+.dashboard-page .sidebar-nav a:hover,
+.dashboard-page .sidebar-bottom a:hover {
+
+    background: rgba(201, 130, 153, 0.25);
+    color: #FFFFFF;
+}
+
+
+/* =====================================================
+   MAIN DASHBOARD
+   ===================================================== */
+
+.dashboard-page .dashboard-main {
+
+    background: var(--background);
+}
+
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.dashboard-page .dashboard-header {
+
+    background: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid var(--border);
+}
+
+
+/* Header search */
+
+.dashboard-page .dashboard-search {
+
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+}
+
+
+.dashboard-page .dashboard-search input {
+
+    color: var(--text);
+}
+
+
+.dashboard-page .dashboard-search input::placeholder {
+
+    color: #A18D95;
+}
+
+
+/* Notification */
+
+.dashboard-page .notification-btn {
+
+    color: var(--burgundy);
+}
+
+
+/* Header avatar */
+
+.dashboard-page .header-avatar {
+
+    background: var(--rose);
+    color: #FFFFFF;
+}
+
+
+/* =====================================================
+   WELCOME SECTION
+   ===================================================== */
+
+.dashboard-page .welcome-section {
+
+    background: linear-gradient(
+        135deg,
+        #FFF7F9 0%,
+        #FBECEF 100%
+    );
+
+    border-color: var(--border);
+}
+
+
+.dashboard-page .welcome-label {
+
+    color: var(--rose);
+}
+
+
+.dashboard-page .welcome-section h1 {
+
+    color: var(--text);
+}
+
+
+.dashboard-page .welcome-section p {
+
+    color: var(--muted);
+}
+
+
+/* Welcome decoration */
+
+.dashboard-page .purple-orb {
+
+    background: var(--rose);
+}
+
+
+.dashboard-page .floating-shape {
+
+    color: var(--rose);
+}
+
+
+/* =====================================================
+   SEARCH QUESTION
+   ===================================================== */
+
+.dashboard-page .question-search {
+
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+
+    box-shadow:
+        0 5px 18px rgba(114, 47, 70, 0.06);
+}
+
+
+.dashboard-page .question-search input {
+
+    color: var(--text);
+}
+
+
+.dashboard-page .question-search input::placeholder {
+
+    color: #A18D95;
+}
+
+
+.dashboard-page .question-search button {
+
+    background: var(--burgundy);
+    color: #FFFFFF;
+}
+
+
+.dashboard-page .question-search button:hover {
+
+    background: var(--burgundy-dark);
+}
+
+
+/* =====================================================
+   QUICK ACTIONS
+   ===================================================== */
+
+.dashboard-page .action-card {
+
+    background: #FFFFFF;
+
+    border: 1px solid var(--border);
+
+    box-shadow:
+        0 5px 18px rgba(114, 47, 70, 0.06);
+}
+
+
+.dashboard-page .action-card:hover {
+
+    border-color: var(--rose-light);
+
+    box-shadow:
+        0 8px 25px rgba(114, 47, 70, 0.12);
+}
+
+
+/* Action icons */
+
+.dashboard-page .action-icon {
+
+    color: #FFFFFF;
+}
+
+
+/* Purple icon → Burgundy */
+
+.dashboard-page .action-icon.purple {
+
+    background: var(--burgundy);
+}
+
+
+/* Blue icon → Rose */
+
+.dashboard-page .action-icon.blue {
+
+    background: var(--rose);
+}
+
+
+/* Orange icon → Soft rose */
+
+.dashboard-page .action-icon.orange {
+
+    background: #B86F88;
+}
+
+
+/* Action text */
+
+.dashboard-page .action-card h3 {
+
+    color: var(--text);
+}
+
+
+.dashboard-page .action-card p {
+
+    color: var(--muted);
+}
+
+
+.dashboard-page .action-arrow {
+
+    color: var(--burgundy);
+}
+
+
+/* =====================================================
+   SECTION HEADINGS
+   ===================================================== */
+
+.dashboard-page .section-title-row h2 {
+
+    color: var(--text);
+}
+
+
+.dashboard-page .section-title-row p {
+
+    color: var(--muted);
+}
+
+
+.dashboard-page .section-title-row > a {
+
+    color: var(--burgundy);
+}
+
+
+.dashboard-page .section-title-row > a:hover {
+
+    color: var(--rose);
+}
+
+
+/* =====================================================
+   NOTEBOOK CARDS
+   ===================================================== */
+
+.dashboard-page .notebook-card {
+
+    background: #FFFFFF;
+
+    border: 1px solid var(--border);
+
+    box-shadow:
+        0 5px 18px rgba(114, 47, 70, 0.06);
+}
+
+
+.dashboard-page .notebook-card:hover {
+
+    border-color: var(--rose-light);
+
+    box-shadow:
+        0 10px 28px rgba(114, 47, 70, 0.12);
+
+    transform: translateY(-2px);
+}
+
+
+/* Notebook icon */
+
+.dashboard-page .notebook-icon {
+
+    background: #F8E4EA;
+    color: var(--burgundy);
+}
+
+
+/* Notebook title */
+
+.dashboard-page .notebook-card h3 {
+
+    color: var(--text);
+}
+
+
+/* Notebook description */
+
+.dashboard-page .notebook-card p {
+
+    color: var(--muted);
+}
+
+
+/* Notebook information */
+
+.dashboard-page .notebook-info {
+
+    color: #8B7A82;
+}
+
+
+/* Three dots */
+
+.dashboard-page .three-dots {
+
+    color: var(--rose);
+}
+
+
+/* Notebook footer */
+
+.dashboard-page .notebook-footer {
+
+    border-top: 1px solid var(--border);
+}
+
+
+.dashboard-page .notebook-footer small {
+
+    color: var(--muted);
+}
+
+
+.dashboard-page .notebook-footer a {
+
+    color: var(--burgundy);
+    font-weight: 600;
+}
+
+
+/* =====================================================
+   EMPTY NOTEBOOK
+   ===================================================== */
+
+.dashboard-page .empty-notebook {
+
+    background: #FFFFFF;
+    border: 1px dashed var(--rose-light);
+}
+
+
+.dashboard-page .empty-icon {
+
+    background: #F8E4EA;
+    color: var(--burgundy);
+}
+
+
+.dashboard-page .empty-notebook h3 {
+
+    color: var(--text);
+}
+
+
+.dashboard-page .empty-notebook p {
+
+    color: var(--muted);
+}
+
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+.dashboard-page .btn-primary {
+
+    background: var(--burgundy);
+    color: #FFFFFF;
+}
+
+
+.dashboard-page .btn-primary:hover {
+
+    background: var(--burgundy-dark);
+}
+
+
+/* =====================================================
+   QUICK STATS
+   ===================================================== */
+
+.dashboard-page .stat-card {
+
+    background: #FFFFFF;
+
+    border: 1px solid var(--border);
+
+    box-shadow:
+        0 5px 18px rgba(114, 47, 70, 0.05);
+}
+
+
+.dashboard-page .stat-icon {
+
+    background: #F8E4EA;
+    color: var(--burgundy);
+}
+
+
+.dashboard-page .stat-card span {
+
+    color: var(--muted);
+}
+
+
+.dashboard-page .stat-card strong {
+
+    color: var(--text);
+}
+
+
+/* =====================================================
+   RECENT ACTIVITY
+   ===================================================== */
+
+.dashboard-page .activity-card {
+
+    background: #FFFFFF;
+
+    border: 1px solid var(--border);
+
+    box-shadow:
+        0 5px 18px rgba(114, 47, 70, 0.05);
+}
+
+
+.dashboard-page .activity-item {
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+.dashboard-page .activity-icon {
+
+    background: #F8E4EA;
+    color: var(--burgundy);
+}
+
+
+.dashboard-page .activity-content strong {
+
+    color: var(--text);
+}
+
+
+.dashboard-page .activity-content small,
+.dashboard-page .activity-time {
+
+    color: var(--muted);
+}
+
+
+/* =====================================================
+   STUDY TIP
+   ===================================================== */
+
+.dashboard-page .study-tip {
+
+    background: linear-gradient(
+        135deg,
+        #722F46,
+        #A95A76
+    );
+
+    color: #FFFFFF;
+
+    box-shadow:
+        0 8px 25px rgba(114, 47, 70, 0.18);
+}
+
+
+.dashboard-page .tip-quote {
+
+    color: #E8C0CC;
+}
+
+
+.dashboard-page .tip-brain {
+
+    color: #FFFFFF;
+}
+
+
+/* =====================================================
+   GENERAL LINKS
+   ===================================================== */
+
+.dashboard-page a {
+
+    color: var(--burgundy);
+}
+
+
+.dashboard-page a:hover {
+
+    color: var(--rose);
+}

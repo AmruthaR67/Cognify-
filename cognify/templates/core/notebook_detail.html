@@ -1,0 +1,773 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ notebook.name }} | Cognify</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7ff;
+            color: #20244a;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 255px;
+            height: 100vh;
+            background: linear-gradient(
+                180deg,
+                #171b50,
+                #252b78
+            );
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 35px;
+            padding-left: 15px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 25px;
+        }
+
+        .profile-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #6154e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .profile-name {
+            font-weight: bold;
+        }
+
+        .profile-role {
+            font-size: 12px;
+            opacity: .7;
+            margin-top: 4px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: white;
+            padding: 14px 15px;
+            border-radius: 10px;
+            font-size: 15px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #5043d8;
+        }
+
+
+        /* MAIN */
+
+        .main {
+            margin-left: 255px;
+            min-height: 100vh;
+            padding: 25px 30px;
+        }
+
+        /* TOP */
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .breadcrumb {
+            color: #777b9b;
+            font-size: 14px;
+        }
+
+        .breadcrumb span {
+            color: #252a68;
+            font-weight: bold;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification {
+            font-size: 22px;
+        }
+
+        .user-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #4438c7;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+
+        /* NOTEBOOK HEADER */
+
+        .notebook-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .notebook-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 15px;
+            background: #e8e6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .notebook-header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .notebook-header p {
+            margin: 7px 0 0;
+            color: #777b9b;
+            font-size: 14px;
+        }
+
+
+        /* THREE COLUMNS */
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 280px 1fr 310px;
+            gap: 20px;
+            min-height: 650px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e5e7f5;
+            border-radius: 15px;
+            padding: 18px;
+            box-shadow: 0 5px 20px rgba(35, 43, 100, .06);
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .panel-title h2 {
+            font-size: 17px;
+            margin: 0;
+        }
+
+        .dots {
+            color: #8589a5;
+            font-size: 20px;
+        }
+
+
+        /* SOURCES */
+
+        .add-source {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #dddffa;
+            border-radius: 10px;
+            background: #fafaff;
+            color: #4438c7;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .add-source:hover {
+            background: #f0efff;
+        }
+
+        .source-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid #ececf5;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .file-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            background: #eeeaff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .source-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .remove {
+            color: #999;
+            cursor: pointer;
+        }
+
+
+        /* AI CHAT */
+
+        .chat-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-area {
+            flex: 1;
+            padding: 15px 5px;
+        }
+
+        .ai-message {
+            background: #f1f3ff;
+            padding: 18px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 14px;
+            color: #404466;
+        }
+
+        .ai-label {
+            color: #4438c7;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .question-form {
+            display: flex;
+            gap: 8px;
+            border: 1px solid #dedff1;
+            padding: 7px;
+            border-radius: 12px;
+        }
+
+        .question-form input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .ask-button {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 10px;
+            background: #533ee5;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+
+        /* SMART OUTPUTS */
+
+        .generate {
+            color: #5144d8;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .output-button {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 9px;
+            background: white;
+            border: 1px solid #e2e3f1;
+            border-radius: 10px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            color: #343861;
+        }
+
+        .output-button:hover {
+            background: #f5f3ff;
+            border-color: #6c5ce7;
+        }
+
+        .output-icon {
+            display: inline-block;
+            width: 25px;
+        }
+
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1100px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main {
+                margin-left: 210px;
+            }
+
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .sources-panel,
+            .outputs-panel {
+                min-height: auto;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        🧠 Cognify
+    </div>
+
+    <div class="profile">
+
+        <div class="profile-circle">
+            {{ request.user.username|first|upper }}
+        </div>
+
+        <div>
+            <div class="profile-name">
+                {{ request.user.username }}
+            </div>
+
+            <div class="profile-role">
+                Student
+            </div>
+        </div>
+
+    </div>
+
+    <nav class="menu">
+
+        <a href="{% url 'dashboard' %}">
+            🏠 Dashboard
+        </a>
+
+        <a href="#">
+            📖 My Notebooks
+        </a>
+
+        <a href="#">
+            ➕ Create Notebook
+        </a>
+
+        <a href="#">
+            🔍 History & Search
+        </a>
+
+        <a href="#">
+            🔖 Saved Results
+        </a>
+
+        <a href="#">
+            ⚙️ Settings
+        </a>
+
+        <a href="#">
+            👤 Profile
+        </a>
+
+        <a href="#">
+            🚪 Logout
+        </a>
+
+    </nav>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+    <div class="topbar">
+
+        <div class="breadcrumb">
+            ‹ My Notebooks &nbsp; › &nbsp;
+            <span>{{ notebook.name }}</span>
+        </div>
+
+        <div class="user-area">
+
+            <div class="notification">
+                🔔
+            </div>
+
+            <div class="user-circle">
+                {{ request.user.username|first|upper }}
+            </div>
+
+            <span>
+                {{ request.user.username }}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- NOTEBOOK HEADER -->
+
+    <div class="notebook-header">
+
+        <div class="notebook-icon">
+            🧠
+        </div>
+
+        <div>
+
+            <h1>
+                {{ notebook.name }}
+            </h1>
+
+            <p>
+                {{ sources|length }} Sources
+                &nbsp; • &nbsp;
+                AI Chat
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- WORKSPACE -->
+
+    <div class="workspace">
+
+
+        <!-- SOURCES -->
+
+        <section class="panel sources-panel">
+
+            <div class="panel-title">
+
+                <h2>
+                    Sources
+                </h2>
+
+                <span class="dots">
+                    ⋮
+                </span>
+
+            </div>
+
+            <form
+    method="POST"
+    action="{% url 'add_source' notebook.id %}"
+    enctype="multipart/form-data"
+>
+    {% csrf_token %}
+
+    <input
+        type="file"
+        name="file"
+        id="sourceFile"
+        accept=".pdf,.doc,.docx,.txt,.ppt,.pptx"
+        hidden
+        onchange="this.form.submit()"
+    >
+
+    <label
+        for="sourceFile"
+        class="add-source"
+    >
+        ＋ Add Source
+    </label>
+</form>
+
+
+            {% for source in sources %}
+
+            <div class="source-item">
+
+                <div class="file-icon">
+                    📄
+                </div>
+
+                <div class="source-name">
+                  {{ source.file.name }}
+                </div>
+
+                <div class="remove">
+                    ×
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <p style="color:#888; font-size:13px;">
+                No sources added yet.
+            </p>
+
+            {% endfor %}
+
+        </section>
+
+
+
+        <!-- AI CHAT -->
+
+        <section class="panel chat-panel">
+
+            <div class="panel-title">
+
+                <h2>
+                    🤖 AI Chat
+                </h2>
+
+                <span class="dots">
+                    ⋮
+                </span>
+
+            </div>
+
+
+            <div class="chat-area">
+
+                {% if question %}
+<div class="ai-message">
+
+    <div class="ai-label">
+        You
+    </div>
+
+    {{ question }}
+
+</div>
+{% endif %}
+
+
+{% if answer %}
+<div class="ai-message" style="margin-top:15px;">
+
+    <div class="ai-label">
+        🤖 Cognify AI
+    </div>
+
+    {{ answer|linebreaks }}
+
+</div>
+{% else %}
+
+<div class="ai-message">
+
+    <div class="ai-label">
+        🤖 Cognify AI
+    </div>
+
+    Ask a question about
+    <strong>{{ notebook.name }}</strong>
+    and get an answer based on your uploaded sources.
+
+</div>
+
+{% endif %}
+
+            </div>
+
+        <!-- AI CHAT -->
+<div class="chat-panel">
+
+    <div class="panel-title">
+        AI Chat
+    </div>
+
+    <div class="chat-messages">
+
+        {% if question %}
+        <div class="ai-message">
+            <div class="ai-label">You</div>
+            {{ question }}
+        </div>
+        {% endif %}
+
+        {% if answer %}
+        <div class="ai-message" style="margin-top:15px;">
+            <div class="ai-label">🤖 Cognify AI</div>
+            {{ answer|linebreaks }}
+        </div>
+        {% else %}
+        <div class="ai-message">
+            <div class="ai-label">🤖 Cognify AI</div>
+
+            Ask a question about
+            <strong>{{ notebook.name }}</strong>
+            and get an answer based on your uploaded sources.
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- QUESTION FORM -->
+            <form
+                method="POST"
+                action="{% url 'ask_question' notebook.id %}"
+                class="question-form"
+            >
+
+                {% csrf_token %}
+
+                <input
+                    type="text"
+                    name="question"
+                    placeholder="Ask a question..."
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="ask-button"
+                >
+                    ➤
+                </button>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- SMART OUTPUTS -->
+
+        <section class="panel outputs-panel">
+
+            <div class="panel-title">
+
+                <h2>
+                    Smart Outputs
+                </h2>
+
+                <span class="dots">
+                    ⋮
+                </span>
+
+            </div>
+
+
+            <div class="generate">
+                ✨ Generate
+            </div>
+
+
+            <a
+    href="{% url 'generate_summary' notebook.id %}"
+    class="output-button"
+>
+    📝 Summary
+</a>
+
+            <button class="output-button">
+                <span class="output-icon">❓</span>
+                FAQs
+            </button>
+
+            <button class="output-button">
+                <span class="output-icon">📝</span>
+                Study Notes
+            </button>
+
+            <button class="output-button">
+                <span class="output-icon">🔖</span>
+                Flashcards
+            </button>
+
+            <button class="output-button">
+                <span class="output-icon">📋</span>
+                Quiz
+            </button>
+
+            <button class="output-button">
+                <span class="output-icon">📊</span>
+                Diagram
+            </button>
+
+            <button class="output-button">
+                <span class="output-icon">🎬</span>
+                Video
+            </button>
+
+            <button class="output-button">
+                <span class="output-icon">🔊</span>
+                Audio
+            </button>
+
+        </section>
+
+    </div>
+
+</main>
+
+</body>
+</html>

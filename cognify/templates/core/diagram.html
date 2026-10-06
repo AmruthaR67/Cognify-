@@ -1,0 +1,516 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<style>
+
+.diagram-page {
+    min-height: calc(100vh - 70px);
+    background: #f5f7ff;
+    padding: 25px;
+}
+
+.diagram-container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    border: 1px solid #e3e0ed;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(40, 30, 90, 0.06);
+}
+
+.diagram-header {
+    height: 75px;
+    border-bottom: 1px solid #eceaf2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+}
+
+.diagram-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.diagram-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #eee9ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+}
+
+.diagram-title h1 {
+    margin: 0;
+    color: #29234f;
+    font-size: 21px;
+}
+
+.close-button {
+    text-decoration: none;
+    color: #5b3df5;
+    font-size: 25px;
+}
+
+.diagram-body {
+    padding: 35px;
+}
+
+.topic-label {
+    display: block;
+    color: #30294d;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.topic-input {
+    width: 100%;
+    box-sizing: border-box;
+    height: 50px;
+    border: 1px solid #ddd9e8;
+    border-radius: 10px;
+    padding: 0 16px;
+    font-size: 15px;
+    outline: none;
+}
+
+.topic-input:focus {
+    border-color: #6b4df5;
+}
+
+.generate-button {
+    margin-top: 18px;
+    border: none;
+    background: #5b3df5;
+    color: white;
+    border-radius: 10px;
+    padding: 14px 30px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.diagram-area {
+    margin-top: 30px;
+    border: 1px solid #e6e3ef;
+    border-radius: 14px;
+    min-height: 430px;
+    padding: 35px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+}
+
+.diagram-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.diagram-node {
+    min-width: 220px;
+    max-width: 430px;
+    padding: 18px 28px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 17px;
+    color: #29234f;
+    border: 2px solid #b9acef;
+    background: #f1edff;
+    box-sizing: border-box;
+}
+
+.diagram-description {
+    margin-top: 7px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #66617a;
+}
+
+.diagram-arrow {
+    height: 45px;
+    width: 2px;
+    background: #7b69c7;
+    position: relative;
+}
+
+.diagram-arrow::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: -5px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 9px solid #7b69c7;
+}
+
+.diagram-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.action-button {
+    border: none;
+    background: #5b3df5;
+    color: white;
+    border-radius: 10px;
+    padding: 12px 25px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.action-button.secondary {
+    background: white;
+    color: #5b3df5;
+    border: 1px solid #dcd7ed;
+}
+
+.empty-diagram {
+    text-align: center;
+    color: #77718b;
+    padding: 60px 20px;
+}
+
+@media(max-width: 650px) {
+
+    .diagram-page {
+        padding: 12px;
+    }
+
+    .diagram-body {
+        padding: 20px;
+    }
+
+    .diagram-node {
+        min-width: 180px;
+        max-width: 90%;
+    }
+
+}
+
+</style>
+
+
+<div class="diagram-page">
+
+    <div class="diagram-container">
+
+        <div class="diagram-header">
+
+            <div class="diagram-title">
+
+                <div class="diagram-icon">
+                    🧠
+                </div>
+
+                <h1>AI Diagram Generator</h1>
+
+            </div>
+
+            <a
+                href="{% url 'workspace' notebook.id %}"
+                class="close-button"
+            >
+                ×
+            </a>
+
+        </div>
+
+
+        <div class="diagram-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <label class="topic-label">
+                    Topic
+                </label>
+
+                <input
+                    type="text"
+                    name="topic"
+                    class="topic-input"
+                    value="{{ topic|default:'' }}"
+                    placeholder="Enter a topic..."
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="generate-button"
+                >
+                    ✨ Generate Diagram
+                </button>
+
+            </form>
+
+
+            {% if diagram_nodes %}
+
+                <div
+                    class="diagram-area"
+                    id="diagramArea"
+                >
+
+                    <div
+                        class="diagram-flow"
+                        id="diagramFlow"
+                    >
+
+                        {% for node in diagram_nodes %}
+
+                            <div class="diagram-node">
+
+                                {{ node.title }}
+
+                                {% if node.description %}
+
+                                    <div class="diagram-description">
+                                        {{ node.description }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                            {% if not forloop.last %}
+
+                                <div class="diagram-arrow"></div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="diagram-actions">
+
+                    <button
+                        type="button"
+                        class="action-button"
+                        onclick="downloadDiagram()"
+                    >
+                        ⬇ Download
+                    </button>
+
+
+                    <form
+                        method="POST"
+                        action="{% url 'save_result' result.id %}"
+                        style="display:inline;"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="action-button"
+                        >
+                            🔖 Save
+                        </button>
+
+                    </form>
+
+
+                    <form
+                        method="POST"
+                        style="display:inline;"
+                    >
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="topic"
+                            value="{{ topic }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="action-button secondary"
+                        >
+                            🔄 Regenerate
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% else %}
+
+                <div class="diagram-area">
+
+                    <div class="empty-diagram">
+
+                        <div style="font-size:55px;">
+                            🧠
+                        </div>
+
+                        <h3>
+                            Generate your AI diagram
+                        </h3>
+
+                        <p>
+                            Enter a topic and Cognify will create
+                            a visual flow diagram from your sources.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function downloadDiagram() {
+
+    const nodes =
+        document.querySelectorAll(".diagram-node");
+
+    if (!nodes.length) {
+        return;
+    }
+
+    let svgHeight =
+        nodes.length * 125 + 80;
+
+    let svg = `
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="700"
+        height="${svgHeight}"
+        viewBox="0 0 700 ${svgHeight}"
+    >
+
+        <rect
+            width="100%"
+            height="100%"
+            fill="white"
+        >
+    `;
+
+    nodes.forEach(function(node, index) {
+
+        const title =
+            node.childNodes[0].textContent.trim();
+
+        const y =
+            30 + index * 125;
+
+        svg += `
+            <rect
+                x="180"
+                y="${y}"
+                width="340"
+                height="70"
+                rx="12"
+                fill="#f1edff"
+                stroke="#8d79e8"
+                stroke-width="2"
+            />
+
+            <text
+                x="350"
+                y="${y + 40}"
+                text-anchor="middle"
+                font-family="Arial"
+                font-size="18"
+                font-weight="bold"
+                fill="#29234f"
+            >
+                ${escapeXml(title)}
+            </text>
+        `;
+
+        if (index < nodes.length - 1) {
+
+            const arrowY =
+                y + 70;
+
+            svg += `
+                <line
+                    x1="350"
+                    y1="${arrowY}"
+                    x2="350"
+                    y2="${arrowY + 45}"
+                    stroke="#7b69c7"
+                    stroke-width="2"
+                />
+
+                <polygon
+                    points="
+                        342,${arrowY + 38}
+                        358,${arrowY + 38}
+                        350,${arrowY + 48}
+                    "
+                    fill="#7b69c7"
+                />
+            `;
+        }
+
+    });
+
+    svg += `
+    </svg>
+    `;
+
+    const blob =
+        new Blob(
+            [svg],
+            {
+                type: "image/svg+xml"
+            }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+        "cognify-diagram.svg";
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+}
+
+
+function escapeXml(text) {
+
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+}
+
+</script>
+
+{% endblock %}

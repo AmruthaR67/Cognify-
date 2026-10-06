@@ -1,0 +1,788 @@
+{% extends "core/base.html" %}
+
+{% block title %}History & Search - Cognify{% endblock %}
+
+{% block content %}
+
+<style>
+/* =========================================================
+   HISTORY PAGE
+   Same structure in light and dark mode
+   ========================================================= */
+
+.history-page {
+    width: 100%;
+    min-height: calc(100vh - 80px);
+    padding: 40px 24px 60px;
+}
+
+.history-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.history-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.history-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    background: linear-gradient(
+        135deg,
+        #633cff,
+        #9a45e8
+    );
+
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 22px;
+}
+
+.history-header-text h1 {
+    margin: 0;
+
+    font-size: 30px;
+    line-height: 1.2;
+
+    color: var(--text-primary, #25245a);
+}
+
+.history-header-text p {
+    margin: 5px 0 0;
+
+    font-size: 15px;
+
+    color: var(--text-secondary, #777);
+}
+
+/* =========================================================
+   SEARCH BOX
+   ========================================================= */
+
+.history-search-box {
+    width: 100%;
+
+    padding: 18px;
+
+    margin-bottom: 28px;
+
+    background: var(--card-bg, #ffffff);
+
+    border: 1px solid var(
+        --border-color,
+        #e6e2f2
+    );
+
+    border-radius: 18px;
+
+    box-shadow: var(
+        --card-shadow,
+        0 5px 25px rgba(50, 40, 120, 0.08)
+    );
+}
+
+.history-search-form {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.history-search-input {
+    flex: 1;
+    min-width: 0;
+
+    height: 50px;
+
+    padding: 0 16px;
+
+    border: 1px solid var(
+        --input-border,
+        #dddafa
+    );
+
+    border-radius: 12px;
+
+    outline: none;
+
+    background: var(
+        --input-bg,
+        #ffffff
+    );
+
+    color: var(
+        --text-primary,
+        #25245a
+    );
+
+    font-size: 15px;
+}
+
+.history-search-input::placeholder {
+    color: var(
+        --placeholder-color,
+        #999
+    );
+}
+
+.history-search-input:focus {
+    border-color: #633cff;
+
+    box-shadow:
+        0 0 0 3px rgba(99, 60, 255, 0.12);
+}
+
+.history-search-button {
+    height: 50px;
+
+    padding: 0 25px;
+
+    border: 0;
+
+    border-radius: 12px;
+
+    background: #633cff;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform .15s ease,
+        background .15s ease;
+}
+
+.history-search-button:hover {
+    background: #5530e8;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+.history-tabs {
+    display: flex;
+    align-items: center;
+
+    gap: 32px;
+
+    border-bottom: 1px solid var(
+        --border-color,
+        #dddddd
+    );
+
+    margin-bottom: 0;
+}
+
+.history-tab {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 52px;
+
+    padding: 0 5px;
+
+    text-decoration: none;
+
+    color: var(
+        --text-secondary,
+        #777
+    );
+
+    font-size: 15px;
+
+    border-bottom: 3px solid transparent;
+
+    transition:
+        color .15s ease,
+        border-color .15s ease;
+}
+
+.history-tab:hover {
+    color: #633cff;
+}
+
+.history-tab.active {
+    color: #633cff;
+
+    border-bottom-color: #633cff;
+
+    font-weight: 700;
+}
+
+/* =========================================================
+   RESULTS
+   ========================================================= */
+
+.history-results {
+    width: 100%;
+
+    background: var(
+        --card-bg,
+        #ffffff
+    );
+
+    border-left: 1px solid var(
+        --border-color,
+        #eeeeee
+    );
+
+    border-right: 1px solid var(
+        --border-color,
+        #eeeeee
+    );
+
+    border-bottom: 1px solid var(
+        --border-color,
+        #eeeeee
+    );
+
+    border-radius: 0 0 16px 16px;
+
+    overflow: hidden;
+}
+
+.history-result {
+    width: 100%;
+
+    min-height: 92px;
+
+    padding: 20px 22px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    background: var(
+        --card-bg,
+        #ffffff
+    );
+
+    border-bottom: 1px solid var(
+        --border-color,
+        #eeeeee
+    );
+
+    transition:
+        background .15s ease;
+}
+
+.history-result:last-child {
+    border-bottom: 0;
+}
+
+.history-result:hover {
+    background: var(
+        --card-hover,
+        #faf9ff
+    );
+}
+
+/* =========================================================
+   RESULT ICON
+   ========================================================= */
+
+.history-result-icon {
+    width: 48px;
+    height: 48px;
+
+    flex: 0 0 48px;
+
+    border-radius: 12px;
+
+    background: var(
+        --result-icon-bg,
+        #eee8ff
+    );
+
+    color: #633cff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+}
+
+/* =========================================================
+   RESULT INFORMATION
+   ========================================================= */
+
+.history-result-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-result-title {
+    margin-bottom: 6px;
+
+    color: var(
+        --text-primary,
+        #25245a
+    );
+
+    font-size: 16px;
+    font-weight: 700;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-result-date {
+    color: var(
+        --text-muted,
+        #999999
+    );
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   RESULT TYPE
+   ========================================================= */
+
+.history-result-type {
+    flex: 0 0 auto;
+
+    color: #633cff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+/* =========================================================
+   SAVE BUTTON
+   ========================================================= */
+
+.history-save-form {
+    flex: 0 0 auto;
+}
+
+.history-save-button {
+    border: 0;
+
+    background: var(
+        --save-bg,
+        #f0ebff
+    );
+
+    color: #633cff;
+
+    padding: 9px 14px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        background .15s ease,
+        transform .15s ease;
+}
+
+.history-save-button:hover {
+    background: var(
+        --save-hover,
+        #e5dcff
+    );
+
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.history-empty {
+    width: 100%;
+
+    padding: 60px 30px;
+
+    text-align: center;
+
+    background: var(
+        --card-bg,
+        #ffffff
+    );
+
+    border:
+        1px solid var(
+            --border-color,
+            #eeeeee
+        );
+
+    border-radius: 16px;
+
+    color: var(
+        --text-secondary,
+        #888
+    );
+}
+
+.history-empty h3 {
+    margin: 0 0 8px;
+
+    color: var(
+        --text-primary,
+        #25245a
+    );
+
+    font-size: 19px;
+}
+
+.history-empty p {
+    margin: 0;
+
+    color: var(
+        --text-secondary,
+        #888
+    );
+}
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+
+html[data-theme="dark"] .history-page {
+    background: #0f1117;
+}
+
+html[data-theme="dark"] .history-header-text h1 {
+    color: #f5f7ff;
+}
+
+html[data-theme="dark"] .history-header-text p {
+    color: #aeb4c2;
+}
+
+html[data-theme="dark"] .history-search-box {
+    background: #171a23;
+
+    border-color: #2a2f3d;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+html[data-theme="dark"] .history-search-input {
+    background: #10131a;
+
+    border-color: #303646;
+
+    color: #f5f7ff;
+}
+
+html[data-theme="dark"] .history-search-input::placeholder {
+    color: #7f8797;
+}
+
+html[data-theme="dark"] .history-tabs {
+    border-bottom-color: #2b3040;
+}
+
+html[data-theme="dark"] .history-tab {
+    color: #9da5b5;
+}
+
+html[data-theme="dark"] .history-tab:hover,
+html[data-theme="dark"] .history-tab.active {
+    color: #9b7cff;
+}
+
+html[data-theme="dark"] .history-tabs .history-tab.active {
+    border-bottom-color: #8b6cff;
+}
+
+html[data-theme="dark"] .history-results {
+    background: #171a23;
+
+    border-color: #2a2f3d;
+}
+
+html[data-theme="dark"] .history-result {
+    background: #171a23;
+
+    border-bottom-color: #2a2f3d;
+}
+
+html[data-theme="dark"] .history-result:hover {
+    background: #1d212c;
+}
+
+html[data-theme="dark"] .history-result-icon {
+    background: #29213f;
+
+    color: #a98cff;
+}
+
+html[data-theme="dark"] .history-result-title {
+    color: #f1f3f8;
+}
+
+html[data-theme="dark"] .history-result-date {
+    color: #8e97a8;
+}
+
+html[data-theme="dark"] .history-result-type {
+    color: #a98cff;
+}
+
+html[data-theme="dark"] .history-save-button {
+    background: #29213f;
+
+    color: #b39aff;
+}
+
+html[data-theme="dark"] .history-save-button:hover {
+    background: #342850;
+}
+
+html[data-theme="dark"] .history-empty {
+    background: #171a23;
+
+    border-color: #2a2f3d;
+
+    color: #9da5b5;
+}
+
+html[data-theme="dark"] .history-empty h3 {
+    color: #f1f3f8;
+}
+
+html[data-theme="dark"] .history-empty p {
+    color: #9da5b5;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .history-page {
+        padding: 25px 15px 45px;
+    }
+
+    .history-header-text h1 {
+        font-size: 25px;
+    }
+
+    .history-search-form {
+        flex-direction: column;
+    }
+
+    .history-search-input {
+        width: 100%;
+    }
+
+    .history-search-button {
+        width: 100%;
+    }
+
+    .history-tabs {
+        gap: 20px;
+    }
+
+    .history-result {
+        align-items: flex-start;
+
+        padding: 17px 15px;
+
+        gap: 12px;
+    }
+
+    .history-result-icon {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+    }
+
+    .history-result-type {
+        display: none;
+    }
+
+    .history-save-button {
+        padding: 8px 10px;
+    }
+
+    .history-result-title {
+        white-space: normal;
+    }
+}
+</style>
+
+
+<div class="history-page">
+
+    <div class="history-container">
+
+        <!-- HEADER -->
+        <header class="history-header">
+
+            <div class="history-icon">
+                ◉
+            </div>
+
+            <div class="history-header-text">
+
+                <h1>
+                    History &amp; Search
+                </h1>
+
+                <p>
+                    Search your Cognify results
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- SEARCH -->
+        <section class="history-search-box">
+
+            <form
+                method="GET"
+                class="history-search-form"
+            >
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ query|default:'' }}"
+                    class="history-search-input"
+                    placeholder="Search conversations, sources and outputs..."
+                >
+
+                <button
+                    type="submit"
+                    class="history-search-button"
+                >
+                    Search
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- TABS -->
+        <nav class="history-tabs">
+
+            <a
+                href="{% url 'history' %}"
+                class="history-tab active"
+            >
+                Recent History
+            </a>
+
+            <a
+                href="{% url 'saved_results' %}"
+                class="history-tab"
+            >
+                Saved Results
+            </a>
+
+        </nav>
+
+
+        <!-- RESULTS -->
+        {% if results %}
+
+            <div class="history-results">
+{% for result in results %}
+
+<a href="{% url 'result_detail' result.id %}" class="history-item">
+
+    <div class="history-icon">
+        {% if result.kind == "summary" %}
+            📄
+        {% elif result.kind == "quiz" %}
+            📝
+        {% elif result.kind == "flashcards" %}
+            🧠
+        {% elif result.kind == "diagram" %}
+            📊
+        {% else %}
+            ✨
+        {% endif %}
+    </div>
+
+    <div class="history-content">
+        <strong>
+            {{ result.title }}
+        </strong>
+
+        <small>
+            {{ result.created_at|date:"d M Y" }}
+        </small>
+    </div>
+
+    <span class="history-arrow">
+        →
+    </span>
+
+</a>
+
+{% empty %}
+
+<div class="no-history">
+    <p>No recent history yet.</p>
+</div>
+
+{% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="history-empty">
+
+                <h3>
+                    No results found
+                </h3>
+
+                <p>
+                    Your generated Cognify results will appear here.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
